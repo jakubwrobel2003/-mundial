@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using MundialPrediction.Core.Interfaces;
+using MundialPrediction.Core.Models;
 
 namespace MundialPrediction.API.Controllers;
 
@@ -8,8 +10,13 @@ namespace MundialPrediction.API.Controllers;
 public class PredictionsController : ControllerBase
 {
     private readonly IPredictionService _predictions;
+    private readonly IMemoryCache _cache;
 
-    public PredictionsController(IPredictionService predictions) => _predictions = predictions;
+    public PredictionsController(IPredictionService predictions, IMemoryCache cache)
+    {
+        _predictions = predictions;
+        _cache = cache;
+    }
 
     [HttpGet("analyze")]
     public async Task<IActionResult> Analyze(
@@ -20,9 +27,15 @@ public class PredictionsController : ControllerBase
         if (string.IsNullOrWhiteSpace(homeTeamId) || string.IsNullOrWhiteSpace(awayTeamId))
             return BadRequest("homeTeamId and awayTeamId are required");
 
+        var key = $"poisson:{homeTeamId}:{awayTeamId}:{stage}";
+        if (_cache.TryGetValue(key, out MatchPrediction? cached))
+            return Ok(cached);
+
         try
         {
             var prediction = await _predictions.PredictCustomMatchAsync(homeTeamId, awayTeamId, stage);
+            // Wynik Poisson jest deterministyczny – cache na 24h (zmienia się tylko przy deploy)
+            _cache.Set(key, prediction, TimeSpan.FromHours(24));
             return Ok(prediction);
         }
         catch (ArgumentException ex)
@@ -37,10 +50,15 @@ public class PredictionsController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.HomeTeamId) || string.IsNullOrWhiteSpace(request.AwayTeamId))
             return BadRequest("homeTeamId and awayTeamId are required");
 
+        var key = $"poisson:{request.HomeTeamId}:{request.AwayTeamId}:{request.Stage ?? "Group"}";
+        if (_cache.TryGetValue(key, out MatchPrediction? cached))
+            return Ok(cached);
+
         try
         {
             var prediction = await _predictions.PredictCustomMatchAsync(
                 request.HomeTeamId, request.AwayTeamId, request.Stage ?? "Group");
+            _cache.Set(key, prediction, TimeSpan.FromHours(24));
             return Ok(prediction);
         }
         catch (ArgumentException ex)

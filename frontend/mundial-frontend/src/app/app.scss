@@ -580,6 +580,54 @@ body {
 
 .sg-matches { display: flex; flex-direction: column; gap: .35rem; }
 
+/* ─── Historia analiz ──────────────────────────────────────────────────── */
+.badge-history {
+  background: $bg3; border: 1px solid $border; color: $muted; cursor: pointer;
+  padding: .25rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 600;
+  transition: background .15s, color .15s; display: flex; align-items: center; gap: .35rem;
+  &:hover { background: $border; color: $text; }
+  &.active { background: $home; border-color: $home; color: #fff; }
+}
+.history-section {
+  max-width: 900px; margin: 0 auto 2rem; padding: 0 1rem;
+}
+.history-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem;
+  h2 { font-size: 1.1rem; color: $text; margin: 0; }
+}
+.history-close {
+  background: none; border: none; color: $muted; font-size: 1.2rem; cursor: pointer;
+  padding: .25rem .5rem; border-radius: $radius-sm;
+  &:hover { color: $text; background: $bg3; }
+}
+.history-empty { color: $muted; font-size: .875rem; text-align: center; padding: 2rem 0; }
+.history-list { display: flex; flex-direction: column; gap: .5rem; }
+.history-card {
+  background: $bg2; border: 1px solid $border; border-radius: $radius;
+  padding: .75rem 1rem; cursor: pointer; transition: border-color .15s, background .15s;
+  &:hover { border-color: $home; background: $bg3; }
+}
+.hc-teams {
+  display: flex; align-items: center; gap: .75rem; font-size: .9rem; font-weight: 600; margin-bottom: .4rem;
+}
+.hc-team { color: $text; flex: 1; }
+.hc-team:last-child { text-align: right; }
+.hc-score {
+  background: $bg3; padding: .15rem .6rem; border-radius: 6px;
+  font-size: 1rem; font-weight: 700; color: $text; flex-shrink: 0;
+}
+.hc-probs { display: flex; gap: 1rem; font-size: .78rem; font-weight: 600; margin-bottom: .35rem; }
+.hc-meta {
+  display: flex; align-items: center; gap: .5rem; font-size: .72rem; color: $muted;
+}
+.hc-chip {
+  background: $bg3; border: 1px solid $border; border-radius: 999px;
+  padding: 1px 8px; font-size: .68rem; color: $muted;
+}
+.hc-date { margin-left: auto; }
+.spinner-sm { width: 10px; height: 10px; }
+
 .match-row {
   display: grid;
   grid-template-columns: 80px 1fr auto auto;

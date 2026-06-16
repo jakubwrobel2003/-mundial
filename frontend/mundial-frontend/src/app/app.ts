@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ApiService, EnrichedPrediction, TeamRecentForm, ClubPlayerStats, WcMatch } from './services/api.service';
+import { ApiService, EnrichedPrediction, TeamRecentForm, ClubPlayerStats, WcMatch, AnalysisHistoryItem } from './services/api.service';
 import { Team } from './models/team.model';
 import { MatchPrediction, PlayerPrediction } from './models/prediction.model';
 
@@ -41,6 +41,11 @@ export class App implements OnInit, OnDestroy {
   ];
   useWeb = true;
   useFootballData = true;
+
+  // Historia analiz
+  history: AnalysisHistoryItem[] = [];
+  historyLoading = false;
+  showHistory = false;
 
   // Terminarz WC 2026
   selectorMode: 'schedule' | 'manual' = 'schedule';
@@ -192,6 +197,54 @@ export class App implements OnInit, OnDestroy {
     this.stepTimeouts.forEach(t => clearTimeout(t));
     this.stepTimeouts = [];
     this.loadingStep = this.analysisSteps.length - 1;
+  }
+
+  loadHistory() {
+    this.historyLoading = true;
+    this.api.getAnalysisHistory(20).subscribe({
+      next: h => { this.history = h; this.historyLoading = false; this.showHistory = true; },
+      error: () => { this.historyLoading = false; }
+    });
+  }
+
+  toggleHistory() {
+    if (this.showHistory) { this.showHistory = false; return; }
+    if (this.history.length) { this.showHistory = true; return; }
+    this.loadHistory();
+  }
+
+  loadFromHistory(item: AnalysisHistoryItem) {
+    this.homeTeamId = item.homeTeamId;
+    this.awayTeamId = item.awayTeamId;
+    this.stage = item.stage;
+    try {
+      this.prediction = JSON.parse(item.predictionJson);
+    } catch { this.prediction = null; }
+    this.enriched = null;
+    this.error = '';
+    this.activeTab = 'overview';
+    this.showHistory = false;
+    if (item.claudeAnalysis && this.prediction) {
+      // Odtwórz też analizę Claude jeśli dostępna
+      this.enriched = {
+        basePrediction: this.prediction,
+        claudeAnalysis: item.claudeAnalysis,
+        footballDataContext: null,
+        homeRecentForm: null, awayRecentForm: null,
+        homeFormData: null, awayFormData: null,
+        homeFormStats: null, awayFormStats: null,
+        homePlayerClubStats: [], awayPlayerClubStats: [],
+        tavilyHomeNews: null, tavilyAwayNews: null,
+        tavilyH2H: null, tavilyHomeQualifiers: null, tavilyAwayQualifiers: null,
+        ragDocumentsUsed: 0,
+        dataSourcesUsed: ['Zapisana analiza (historia)'],
+      };
+    }
+    this.selectorMode = 'manual';
+  }
+
+  historyDate(iso: string): string {
+    return new Date(iso).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
 
   ngOnDestroy() {

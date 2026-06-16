@@ -15,6 +15,10 @@
         <span class="badge badge-ai">Claude AI</span>
         <span class="badge badge-data">football-data.org</span>
         <span class="badge badge-live">Tavily Live</span>
+        <button class="badge badge-history" (click)="toggleHistory()" [class.active]="showHistory">
+          @if (historyLoading) { <span class="spinner spinner-sm"></span> } @else { 🕐 }
+          Historia
+        </button>
       </div>
     </div>
   </header>
@@ -797,6 +801,41 @@
         <p class="ld-sub">⚽ Poisson xG · macierz celów · prawdopodobieństwa</p>
       </div>
     </div>
+  }
+
+  <!-- ═══ HISTORIA ANALIZ ══════════════════════════════════════════════════ -->
+  @if (showHistory) {
+    <section class="history-section">
+      <div class="history-header">
+        <h2>🕐 Historia analiz</h2>
+        <button class="history-close" (click)="showHistory = false">✕</button>
+      </div>
+      @if (!history.length) {
+        <p class="history-empty">Brak zapisanych analiz. Wykonaj Pełną analizę AI – wyniki są automatycznie zapisywane.</p>
+      }
+      <div class="history-list">
+        @for (item of history; track item.id) {
+          <div class="history-card" (click)="loadFromHistory(item)">
+            <div class="hc-teams">
+              <span class="hc-team">{{ teamById(item.homeTeamId)?.flagEmoji ?? '🏳️' }} {{ teamById(item.homeTeamId)?.name ?? item.homeTeamId }}</span>
+              <span class="hc-score">{{ item.predictedHomeGoals }} – {{ item.predictedAwayGoals }}</span>
+              <span class="hc-team">{{ teamById(item.awayTeamId)?.name ?? item.awayTeamId }} {{ teamById(item.awayTeamId)?.flagEmoji ?? '🏳️' }}</span>
+            </div>
+            <div class="hc-probs">
+              <span class="hc-w" style="color:#22c55e">{{ item.homeWinProbability }}%</span>
+              <span class="hc-d" style="color:#eab308">{{ item.drawProbability }}%</span>
+              <span class="hc-l" style="color:#ef4444">{{ item.awayWinProbability }}%</span>
+            </div>
+            <div class="hc-meta">
+              <span>{{ item.stage }}</span>
+              @if (item.claudeAnalysis) { <span class="hc-chip">🤖 AI</span> }
+              @if (item.usedTavily) { <span class="hc-chip">🌍 Tavily</span> }
+              <span class="hc-date">{{ historyDate(item.createdAt) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
   }
 
   <!-- Loading overlay – pełna analiza AI -->

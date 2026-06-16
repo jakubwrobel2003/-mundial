@@ -160,6 +160,10 @@ builder.Services.AddScoped<TeamHistoryService>();
 builder.Services.AddScoped<PlayerClubStatsService>();
 builder.Services.AddScoped<EnrichedPredictionService>();
 
+// ── Terminarz + warmup ────────────────────────────────────────────────────
+builder.Services.AddScoped<MundialPrediction.API.Services.ScheduleService>();
+builder.Services.AddHostedService<MundialPrediction.API.Services.ScheduleWarmupService>();
+
 // ── Port (Railway wstrzykuje PORT, lokalnie domyślnie 5000) ──────────────
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");

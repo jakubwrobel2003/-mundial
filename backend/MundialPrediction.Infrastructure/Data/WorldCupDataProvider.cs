@@ -6,26 +6,24 @@ public static class WorldCupDataProvider
 {
     public static List<Team> GetTeams() => new()
     {
-        BuildFrance(),
-        BuildArgentina(),
-        BuildEngland(),
-        BuildBrazil(),
-        BuildSpain(),
-        BuildGermany(),
-        BuildPortugal(),
-        BuildNetherlands(),
-        BuildBelgium(),
-        BuildUruguay(),
-        BuildMorocco(),
-        BuildUSA(),
-        BuildMexico(),
-        BuildCanada(),
-        BuildJapan(),
-        BuildSouthKorea(),
-        BuildSenegal(),
-        BuildNigeria(),
-        BuildColombia(),
-        BuildCroatia()
+        // Oryginalne 20 drużyn
+        BuildFrance(), BuildArgentina(), BuildEngland(), BuildBrazil(), BuildSpain(),
+        BuildGermany(), BuildPortugal(), BuildNetherlands(), BuildBelgium(), BuildUruguay(),
+        BuildMorocco(), BuildUSA(), BuildMexico(), BuildCanada(), BuildJapan(),
+        BuildSouthKorea(), BuildSenegal(), BuildNigeria(), BuildColombia(), BuildCroatia(),
+        // UEFA (dodatkowe 8)
+        BuildItaly(), BuildSwitzerland(), BuildDenmark(), BuildAustria(),
+        BuildTurkey(), BuildPoland(), BuildSerbia(), BuildUkraine(),
+        // CONMEBOL (dodatkowe 2)
+        BuildEcuador(), BuildVenezuela(),
+        // CONCACAF (dodatkowe 3)
+        BuildPanama(), BuildHonduras(), BuildJamaica(),
+        // CAF (dodatkowe 6)
+        BuildEgypt(), BuildIvoryCoast(), BuildGhana(), BuildSouthAfrica(), BuildTunisia(), BuildCameroon(),
+        // AFC (dodatkowe 6)
+        BuildSaudiArabia(), BuildIran(), BuildAustralia(), BuildQatar(), BuildIraq(), BuildJordan(),
+        // OFC
+        BuildNewZealand(),
     };
 
     private static Team BuildFrance() => new()
@@ -718,6 +716,486 @@ public static class WorldCupDataProvider
         Players = new List<Player>
         {
             new() { Id = "modric", Name = "Luka Modric", Age = 38, Club = "Real Madrid", Position = Position.Midfielder, ShirtNumber = 10, IsCaptain = true, IsKeyStar = true, OverallRating = 88, CurrentForm = 8.2, GoalsPer90 = 0.14, AssistsPer90 = 0.38, ShotsPer90 = 1.8, ShotsOnTargetPer90 = 0.7, KeyPassesPer90 = 4.8, DribblesPer90 = 2.4, FoulsCommittedPer90 = 1.1, FoulsDrawnPer90 = 2.1, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.0, TacklesPer90 = 2.1, InterceptionsPer90 = 1.8, AerialDuelsPer90 = 0.8, Description = "Ballon d'Or winner. Ageless wonder who controls every match he plays. Last World Cup.", PlayingCharacteristics = "Passing mastery, dribbling, stamina, vision, leadership, free kicks" },
+        }
+    };
+
+    // ─── UEFA (dodatkowe) ──────────────────────────────────────────────────
+
+    private static Team BuildItaly() => new()
+    {
+        Id = "ita", Name = "Italy", ShortName = "ITA", FlagEmoji = "🇮🇹",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 9,
+        PrimaryStyle = PlayingStyle.Possession, SecondaryStyle = PlayingStyle.Defensive,
+        GoalsPerGame = 1.8, GoalsConcededPerGame = 0.8, ShotsPerGame = 14.0, ShotsOnTargetPerGame = 4.8,
+        FoulsPerGame = 13.2, YellowCardsPerGame = 2.1, RedCardsPerGame = 0.1,
+        Possession = 57.0, PressureIntensity = 68, DefensiveLineHeight = 62,
+        CurrentForm = 7.8, RecentResults = "W W D W D", SquadStrength = 86,
+        ManagerName = "Luciano Spalletti", TacticalSetup = "4-3-3",
+        Description = "Tactically disciplined with world-class goalkeeper and creative midfield. Compact defensive structure, lethal on counter-attacks.",
+        Players = new List<Player>
+        {
+            new() { Id = "donnarumma", Name = "Gianluigi Donnarumma", Age = 26, Club = "PSG", Position = Position.Goalkeeper, ShirtNumber = 1, IsKeyStar = true, OverallRating = 91, CurrentForm = 9.0, GoalsPer90 = 0, AssistsPer90 = 0, ShotsPer90 = 0, ShotsOnTargetPer90 = 0, KeyPassesPer90 = 0.5, DribblesPer90 = 0, FoulsCommittedPer90 = 0.1, FoulsDrawnPer90 = 0, YellowCardsPer90 = 0.06, RedCardsPer90 = 0, TacklesPer90 = 0, InterceptionsPer90 = 0, AerialDuelsPer90 = 1.5, Description = "World-class shot-stopper and commanding presence.", PlayingCharacteristics = "Reflexes, positioning, distribution, commanding" },
+            new() { Id = "barella", Name = "Nicolo Barella", Age = 27, Club = "Inter Milan", Position = Position.Midfielder, ShirtNumber = 8, IsKeyStar = true, OverallRating = 88, CurrentForm = 8.5, GoalsPer90 = 0.15, AssistsPer90 = 0.32, ShotsPer90 = 1.8, ShotsOnTargetPer90 = 0.7, KeyPassesPer90 = 2.8, DribblesPer90 = 2.1, FoulsCommittedPer90 = 1.9, FoulsDrawnPer90 = 1.8, YellowCardsPer90 = 0.38, RedCardsPer90 = 0.02, TacklesPer90 = 3.2, InterceptionsPer90 = 2.1, AerialDuelsPer90 = 1.4, Description = "Italy's engine. Box-to-box excellence.", PlayingCharacteristics = "Ball recovery, driving runs, creativity, physicality" },
+            new() { Id = "chiesa", Name = "Federico Chiesa", Age = 27, Club = "Liverpool", Position = Position.Forward, ShirtNumber = 14, IsKeyStar = true, OverallRating = 85, CurrentForm = 8.1, GoalsPer90 = 0.38, AssistsPer90 = 0.28, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.1, KeyPassesPer90 = 1.8, DribblesPer90 = 2.9, FoulsCommittedPer90 = 0.9, FoulsDrawnPer90 = 2.8, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 0.6, InterceptionsPer90 = 0.4, AerialDuelsPer90 = 0.8, Description = "Electric winger with pace and direct running.", PlayingCharacteristics = "Dribbling, pace, direct running, fouls drawn" },
+            new() { Id = "retegui", Name = "Mateo Retegui", Age = 25, Club = "Atalanta", Position = Position.Forward, ShirtNumber = 9, OverallRating = 83, CurrentForm = 7.8, GoalsPer90 = 0.55, AssistsPer90 = 0.18, ShotsPer90 = 3.2, ShotsOnTargetPer90 = 1.4, KeyPassesPer90 = 0.8, DribblesPer90 = 0.6, FoulsCommittedPer90 = 1.2, FoulsDrawnPer90 = 1.8, YellowCardsPer90 = 0.22, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 3.2, Description = "Physical striker with good aerial ability and goalscoring instinct.", PlayingCharacteristics = "Aerial threat, hold-up play, pressing, clinical" },
+        }
+    };
+
+    private static Team BuildSwitzerland() => new()
+    {
+        Id = "sui", Name = "Switzerland", ShortName = "SUI", FlagEmoji = "🇨🇭",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 17,
+        PrimaryStyle = PlayingStyle.Defensive, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.7, GoalsConcededPerGame = 0.9, ShotsPerGame = 13.5, ShotsOnTargetPerGame = 4.5,
+        FoulsPerGame = 12.4, YellowCardsPerGame = 1.9, RedCardsPerGame = 0.09,
+        Possession = 51.0, PressureIntensity = 64, DefensiveLineHeight = 58,
+        CurrentForm = 7.4, RecentResults = "W D W D W", SquadStrength = 82,
+        ManagerName = "Murat Yakin", TacticalSetup = "3-4-3 / 4-2-3-1",
+        Description = "Organized and difficult to beat. Xhaka the heartbeat of the midfield, strong defensive unit and lethal set-pieces.",
+        Players = new List<Player>
+        {
+            new() { Id = "sommer_y", Name = "Yann Sommer", Age = 36, Club = "Inter Milan", Position = Position.Goalkeeper, ShirtNumber = 1, IsKeyStar = true, OverallRating = 86, CurrentForm = 8.2, GoalsPer90 = 0, AssistsPer90 = 0, ShotsPer90 = 0, ShotsOnTargetPer90 = 0, KeyPassesPer90 = 0.4, DribblesPer90 = 0, FoulsCommittedPer90 = 0.1, FoulsDrawnPer90 = 0, YellowCardsPer90 = 0.04, RedCardsPer90 = 0, TacklesPer90 = 0, InterceptionsPer90 = 0, AerialDuelsPer90 = 1.2, Description = "Experienced, reliable goalkeeper with great reflexes.", PlayingCharacteristics = "Reflexes, distribution, commanding penalty area" },
+            new() { Id = "xhaka", Name = "Granit Xhaka", Age = 32, Club = "Bayer Leverkusen", Position = Position.Midfielder, ShirtNumber = 10, IsCaptain = true, IsKeyStar = true, OverallRating = 85, CurrentForm = 8.3, GoalsPer90 = 0.18, AssistsPer90 = 0.28, ShotsPer90 = 1.6, ShotsOnTargetPer90 = 0.6, KeyPassesPer90 = 3.2, DribblesPer90 = 1.2, FoulsCommittedPer90 = 2.4, FoulsDrawnPer90 = 1.1, YellowCardsPer90 = 0.48, RedCardsPer90 = 0.05, TacklesPer90 = 3.1, InterceptionsPer90 = 2.2, AerialDuelsPer90 = 1.8, Description = "Switzerland's heartbeat. Long-range shooting and combative midfield presence.", PlayingCharacteristics = "Passing range, shooting, physical duels, leadership" },
+            new() { Id = "shaqiri", Name = "Xherdan Shaqiri", Age = 33, Club = "Chicago Fire", Position = Position.Midfielder, ShirtNumber = 23, OverallRating = 80, CurrentForm = 7.4, GoalsPer90 = 0.28, AssistsPer90 = 0.38, ShotsPer90 = 2.1, ShotsOnTargetPer90 = 0.9, KeyPassesPer90 = 2.4, DribblesPer90 = 2.8, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 2.2, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.01, TacklesPer90 = 0.8, InterceptionsPer90 = 0.6, AerialDuelsPer90 = 0.5, Description = "Tournament performer. Low-centre-of-gravity dribbler with explosive shooting.", PlayingCharacteristics = "Dribbling, shooting, creativity, big game moments" },
+            new() { Id = "embolo", Name = "Breel Embolo", Age = 27, Club = "Monaco", Position = Position.Forward, ShirtNumber = 7, OverallRating = 79, CurrentForm = 7.2, GoalsPer90 = 0.42, AssistsPer90 = 0.18, ShotsPer90 = 2.4, ShotsOnTargetPer90 = 1.0, KeyPassesPer90 = 0.8, DribblesPer90 = 1.8, FoulsCommittedPer90 = 1.4, FoulsDrawnPer90 = 2.1, YellowCardsPer90 = 0.20, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 2.4, Description = "Physical, powerful forward who causes problems for defenders.", PlayingCharacteristics = "Strength, aerial duels, pressing, goal threat" },
+        }
+    };
+
+    private static Team BuildDenmark() => new()
+    {
+        Id = "den", Name = "Denmark", ShortName = "DEN", FlagEmoji = "🇩🇰",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 21,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.HighPress,
+        GoalsPerGame = 1.6, GoalsConcededPerGame = 0.9, ShotsPerGame = 13.8, ShotsOnTargetPerGame = 4.6,
+        FoulsPerGame = 12.1, YellowCardsPerGame = 1.7, RedCardsPerGame = 0.07,
+        Possession = 53.0, PressureIntensity = 70, DefensiveLineHeight = 64,
+        CurrentForm = 7.2, RecentResults = "W W D L W", SquadStrength = 80,
+        ManagerName = "Kasper Hjulmand", TacticalSetup = "4-2-3-1 / 4-3-3",
+        Description = "Consistent, hard-working team. Eriksen pulls the strings from midfield. Strong collective unit with good set-piece delivery.",
+        Players = new List<Player>
+        {
+            new() { Id = "eriksen", Name = "Christian Eriksen", Age = 32, Club = "Manchester United", Position = Position.Midfielder, ShirtNumber = 10, IsKeyStar = true, OverallRating = 84, CurrentForm = 8.0, GoalsPer90 = 0.21, AssistsPer90 = 0.48, ShotsPer90 = 1.9, ShotsOnTargetPer90 = 0.7, KeyPassesPer90 = 4.2, DribblesPer90 = 1.4, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 1.4, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.0, TacklesPer90 = 1.2, InterceptionsPer90 = 0.9, AerialDuelsPer90 = 0.6, Description = "Creative genius and inspiration. The heart of Denmark's build-up play.", PlayingCharacteristics = "Creativity, vision, passing, set-pieces, movement" },
+            new() { Id = "hojbjerg", Name = "Pierre-Emile Hojbjerg", Age = 29, Club = "Atletico Madrid", Position = Position.Midfielder, ShirtNumber = 8, IsCaptain = true, OverallRating = 82, CurrentForm = 7.8, GoalsPer90 = 0.12, AssistsPer90 = 0.18, ShotsPer90 = 1.2, ShotsOnTargetPer90 = 0.4, KeyPassesPer90 = 2.1, DribblesPer90 = 1.1, FoulsCommittedPer90 = 2.2, FoulsDrawnPer90 = 0.9, YellowCardsPer90 = 0.38, RedCardsPer90 = 0.02, TacklesPer90 = 4.1, InterceptionsPer90 = 2.8, AerialDuelsPer90 = 2.1, Description = "Combative midfield anchor with big-game experience.", PlayingCharacteristics = "Ball-winning, physicality, covering ground, leadership" },
+            new() { Id = "wind", Name = "Jonas Wind", Age = 25, Club = "Wolfsburg", Position = Position.Forward, ShirtNumber = 9, OverallRating = 78, CurrentForm = 7.2, GoalsPer90 = 0.44, AssistsPer90 = 0.18, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.2, KeyPassesPer90 = 0.6, DribblesPer90 = 0.8, FoulsCommittedPer90 = 0.9, FoulsDrawnPer90 = 1.4, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.0, TacklesPer90 = 0.4, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 2.8, Description = "Physical striker with good movement and aerial threat.", PlayingCharacteristics = "Hold-up play, aerial duels, movement, pressing" },
+        }
+    };
+
+    private static Team BuildAustria() => new()
+    {
+        Id = "aut", Name = "Austria", ShortName = "AUT", FlagEmoji = "🇦🇹",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 27,
+        PrimaryStyle = PlayingStyle.HighPress, SecondaryStyle = PlayingStyle.Possession,
+        GoalsPerGame = 1.8, GoalsConcededPerGame = 1.0, ShotsPerGame = 14.2, ShotsOnTargetPerGame = 4.7,
+        FoulsPerGame = 13.0, YellowCardsPerGame = 1.9, RedCardsPerGame = 0.09,
+        Possession = 54.0, PressureIntensity = 72, DefensiveLineHeight = 66,
+        CurrentForm = 7.0, RecentResults = "W L W W D", SquadStrength = 78,
+        ManagerName = "Ralf Rangnick", TacticalSetup = "4-2-3-1",
+        Description = "High-energy pressing football under Rangnick. Direct, aggressive, quick transitions.",
+        Players = new List<Player>
+        {
+            new() { Id = "sabitzer", Name = "Marcel Sabitzer", Age = 30, Club = "Borussia Dortmund", Position = Position.Midfielder, ShirtNumber = 8, IsCaptain = true, IsKeyStar = true, OverallRating = 82, CurrentForm = 7.9, GoalsPer90 = 0.22, AssistsPer90 = 0.28, ShotsPer90 = 2.1, ShotsOnTargetPer90 = 0.8, KeyPassesPer90 = 2.4, DribblesPer90 = 1.8, FoulsCommittedPer90 = 1.8, FoulsDrawnPer90 = 1.4, YellowCardsPer90 = 0.28, RedCardsPer90 = 0.02, TacklesPer90 = 2.8, InterceptionsPer90 = 1.9, AerialDuelsPer90 = 1.2, Description = "Austria's key midfielder - dynamic and direct.", PlayingCharacteristics = "Box-to-box energy, shooting, pressing, leadership" },
+            new() { Id = "baumgartner", Name = "Christoph Baumgartner", Age = 25, Club = "RB Leipzig", Position = Position.Midfielder, ShirtNumber = 10, IsKeyStar = true, OverallRating = 80, CurrentForm = 7.7, GoalsPer90 = 0.32, AssistsPer90 = 0.35, ShotsPer90 = 2.4, ShotsOnTargetPer90 = 1.0, KeyPassesPer90 = 2.8, DribblesPer90 = 2.1, FoulsCommittedPer90 = 1.1, FoulsDrawnPer90 = 1.8, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 1.4, InterceptionsPer90 = 1.1, AerialDuelsPer90 = 0.8, Description = "Creative attacking midfielder with good goal threat.", PlayingCharacteristics = "Creativity, movement, goals, pressing" },
+            new() { Id = "gregoritsch", Name = "Michael Gregoritsch", Age = 30, Club = "SC Freiburg", Position = Position.Forward, ShirtNumber = 11, OverallRating = 76, CurrentForm = 7.1, GoalsPer90 = 0.41, AssistsPer90 = 0.15, ShotsPer90 = 2.6, ShotsOnTargetPer90 = 1.0, KeyPassesPer90 = 0.6, DribblesPer90 = 0.8, FoulsCommittedPer90 = 1.0, FoulsDrawnPer90 = 1.5, YellowCardsPer90 = 0.16, RedCardsPer90 = 0.0, TacklesPer90 = 0.3, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 3.0, Description = "Tall striker with aerial threat and work rate.", PlayingCharacteristics = "Height, aerial duels, pressing, goal threat" },
+        }
+    };
+
+    private static Team BuildTurkey() => new()
+    {
+        Id = "tur", Name = "Turkey", ShortName = "TUR", FlagEmoji = "🇹🇷",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 38,
+        PrimaryStyle = PlayingStyle.CounterAttack, SecondaryStyle = PlayingStyle.Direct,
+        GoalsPerGame = 1.6, GoalsConcededPerGame = 1.1, ShotsPerGame = 13.4, ShotsOnTargetPerGame = 4.3,
+        FoulsPerGame = 13.8, YellowCardsPerGame = 2.2, RedCardsPerGame = 0.12,
+        Possession = 48.0, PressureIntensity = 65, DefensiveLineHeight = 54,
+        CurrentForm = 7.2, RecentResults = "W W L W D", SquadStrength = 76,
+        ManagerName = "Vincenzo Montella", TacticalSetup = "4-1-4-1",
+        Description = "Unpredictable and passionate. Calhanoglu the creative heart, with explosive forwards. Can be physical and aggressive.",
+        Players = new List<Player>
+        {
+            new() { Id = "calhanoglu", Name = "Hakan Calhanoglu", Age = 31, Club = "Inter Milan", Position = Position.Midfielder, ShirtNumber = 10, IsCaptain = true, IsKeyStar = true, OverallRating = 85, CurrentForm = 8.2, GoalsPer90 = 0.28, AssistsPer90 = 0.42, ShotsPer90 = 2.4, ShotsOnTargetPer90 = 0.9, KeyPassesPer90 = 3.8, DribblesPer90 = 1.8, FoulsCommittedPer90 = 1.4, FoulsDrawnPer90 = 2.1, YellowCardsPer90 = 0.28, RedCardsPer90 = 0.01, TacklesPer90 = 3.2, InterceptionsPer90 = 2.1, AerialDuelsPer90 = 0.9, Description = "World-class regista and set-piece specialist.", PlayingCharacteristics = "Deep-lying playmaking, passing, free kicks, penalties" },
+            new() { Id = "yildiz", Name = "Kenan Yildiz", Age = 20, Club = "Juventus", Position = Position.Forward, ShirtNumber = 11, IsKeyStar = true, OverallRating = 81, CurrentForm = 7.8, GoalsPer90 = 0.38, AssistsPer90 = 0.32, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.1, KeyPassesPer90 = 2.4, DribblesPer90 = 3.1, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 2.8, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.0, TacklesPer90 = 0.6, InterceptionsPer90 = 0.4, AerialDuelsPer90 = 0.5, Description = "Electrifying young talent. Turkey's next superstar.", PlayingCharacteristics = "Dribbling, creativity, directness, youth energy" },
+            new() { Id = "demiral", Name = "Merih Demiral", Age = 26, Club = "Al-Qadsiah", Position = Position.Defender, ShirtNumber = 3, OverallRating = 79, CurrentForm = 7.4, GoalsPer90 = 0.12, AssistsPer90 = 0.08, ShotsPer90 = 0.6, ShotsOnTargetPer90 = 0.2, KeyPassesPer90 = 0.9, DribblesPer90 = 0.2, FoulsCommittedPer90 = 2.1, FoulsDrawnPer90 = 0.2, YellowCardsPer90 = 0.42, RedCardsPer90 = 0.04, TacklesPer90 = 3.2, InterceptionsPer90 = 2.1, AerialDuelsPer90 = 5.2, Description = "Aggressive central defender with good aerial ability.", PlayingCharacteristics = "Aerial duels, physicality, blocking, aggression" },
+        }
+    };
+
+    private static Team BuildPoland() => new()
+    {
+        Id = "pol", Name = "Poland", ShortName = "POL", FlagEmoji = "🇵🇱",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 29,
+        PrimaryStyle = PlayingStyle.CounterAttack, SecondaryStyle = PlayingStyle.Direct,
+        GoalsPerGame = 1.5, GoalsConcededPerGame = 1.1, ShotsPerGame = 13.0, ShotsOnTargetPerGame = 4.2,
+        FoulsPerGame = 13.5, YellowCardsPerGame = 2.0, RedCardsPerGame = 0.1,
+        Possession = 46.0, PressureIntensity = 60, DefensiveLineHeight = 52,
+        CurrentForm = 6.8, RecentResults = "D W L W D", SquadStrength = 77,
+        ManagerName = "Michal Probierz", TacticalSetup = "4-2-3-1",
+        Description = "Built around Lewandowski. Counter-attacking team that defends deep and relies on Lewandowski's world-class finishing.",
+        Players = new List<Player>
+        {
+            new() { Id = "lewandowski", Name = "Robert Lewandowski", Age = 37, Club = "Barcelona", Position = Position.Forward, ShirtNumber = 9, IsCaptain = true, IsKeyStar = true, OverallRating = 90, CurrentForm = 8.4, GoalsPer90 = 0.82, AssistsPer90 = 0.24, ShotsPer90 = 4.2, ShotsOnTargetPer90 = 1.9, KeyPassesPer90 = 1.2, DribblesPer90 = 0.8, FoulsCommittedPer90 = 0.6, FoulsDrawnPer90 = 2.2, YellowCardsPer90 = 0.12, RedCardsPer90 = 0.0, TacklesPer90 = 0.3, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 3.8, Description = "One of the greatest strikers of his generation. Clinical finisher with every type of goal.", PlayingCharacteristics = "Clinical finishing, movement, aerial threat, hold-up play, penalties" },
+            new() { Id = "zielinski", Name = "Piotr Zielinski", Age = 30, Club = "Inter Milan", Position = Position.Midfielder, ShirtNumber = 10, OverallRating = 83, CurrentForm = 8.0, GoalsPer90 = 0.24, AssistsPer90 = 0.38, ShotsPer90 = 2.1, ShotsOnTargetPer90 = 0.8, KeyPassesPer90 = 3.2, DribblesPer90 = 2.1, FoulsCommittedPer90 = 0.9, FoulsDrawnPer90 = 1.6, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 1.8, InterceptionsPer90 = 1.4, AerialDuelsPer90 = 0.8, Description = "Creative midfield maestro. Poland's second most important player.", PlayingCharacteristics = "Creativity, passing, dribbling, shooting" },
+            new() { Id = "szczesny", Name = "Wojciech Szczesny", Age = 35, Club = "FC Barcelona", Position = Position.Goalkeeper, ShirtNumber = 1, IsKeyStar = true, OverallRating = 85, CurrentForm = 8.1, GoalsPer90 = 0, AssistsPer90 = 0, ShotsPer90 = 0, ShotsOnTargetPer90 = 0, KeyPassesPer90 = 0.3, DribblesPer90 = 0, FoulsCommittedPer90 = 0.1, FoulsDrawnPer90 = 0, YellowCardsPer90 = 0.05, RedCardsPer90 = 0.01, TacklesPer90 = 0, InterceptionsPer90 = 0, AerialDuelsPer90 = 1.3, Description = "Experienced goalkeeper with big-game mentality.", PlayingCharacteristics = "Shot-stopping, reflexes, distribution, penalty saves" },
+        }
+    };
+
+    private static Team BuildSerbia() => new()
+    {
+        Id = "srb", Name = "Serbia", ShortName = "SRB", FlagEmoji = "🇷🇸",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 33,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.7, GoalsConcededPerGame = 1.2, ShotsPerGame = 14.1, ShotsOnTargetPerGame = 4.5,
+        FoulsPerGame = 14.2, YellowCardsPerGame = 2.3, RedCardsPerGame = 0.14,
+        Possession = 49.0, PressureIntensity = 62, DefensiveLineHeight = 55,
+        CurrentForm = 6.9, RecentResults = "W D W L W", SquadStrength = 75,
+        ManagerName = "Dragan Stojkovic", TacticalSetup = "3-4-2-1",
+        Description = "Physically powerful with lethal attack. Vlahovic and Jovic up front, Tadic creating. Physical and direct.",
+        Players = new List<Player>
+        {
+            new() { Id = "vlahovic", Name = "Dusan Vlahovic", Age = 25, Club = "Juventus", Position = Position.Forward, ShirtNumber = 9, IsKeyStar = true, OverallRating = 86, CurrentForm = 7.8, GoalsPer90 = 0.72, AssistsPer90 = 0.14, ShotsPer90 = 3.8, ShotsOnTargetPer90 = 1.6, KeyPassesPer90 = 0.8, DribblesPer90 = 0.8, FoulsCommittedPer90 = 1.2, FoulsDrawnPer90 = 2.1, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 3.6, Description = "Powerful striker with explosive shot and aerial threat.", PlayingCharacteristics = "Shooting power, aerial duels, movement, physicality" },
+            new() { Id = "tadic", Name = "Dusan Tadic", Age = 36, Club = "Fenerbahce", Position = Position.Midfielder, ShirtNumber = 10, IsCaptain = true, OverallRating = 82, CurrentForm = 7.5, GoalsPer90 = 0.28, AssistsPer90 = 0.52, ShotsPer90 = 2.1, ShotsOnTargetPer90 = 0.8, KeyPassesPer90 = 4.1, DribblesPer90 = 2.8, FoulsCommittedPer90 = 0.9, FoulsDrawnPer90 = 2.8, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.0, TacklesPer90 = 0.8, InterceptionsPer90 = 0.6, AerialDuelsPer90 = 0.4, Description = "Veteran creative leader. Vision and set-piece delivery.", PlayingCharacteristics = "Creativity, vision, set-pieces, dribbling, leadership" },
+            new() { Id = "milinkovic_v", Name = "Vanja Milinkovic-Savic", Age = 27, Club = "Torino", Position = Position.Goalkeeper, ShirtNumber = 1, OverallRating = 80, CurrentForm = 7.6, GoalsPer90 = 0, AssistsPer90 = 0, ShotsPer90 = 0, ShotsOnTargetPer90 = 0, KeyPassesPer90 = 0.4, DribblesPer90 = 0, FoulsCommittedPer90 = 0.1, FoulsDrawnPer90 = 0, YellowCardsPer90 = 0.05, RedCardsPer90 = 0, TacklesPer90 = 0, InterceptionsPer90 = 0, AerialDuelsPer90 = 1.3, Description = "Tall, athletic goalkeeper with strong reflexes.", PlayingCharacteristics = "Shot-stopping, commanding, distribution" },
+        }
+    };
+
+    private static Team BuildUkraine() => new()
+    {
+        Id = "ukr", Name = "Ukraine", ShortName = "UKR", FlagEmoji = "🇺🇦",
+        Confederation = "UEFA", Group = "TBD", FifaRanking = 22,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.5, GoalsConcededPerGame = 1.1, ShotsPerGame = 13.2, ShotsOnTargetPerGame = 4.3,
+        FoulsPerGame = 12.8, YellowCardsPerGame = 1.9, RedCardsPerGame = 0.08,
+        Possession = 50.0, PressureIntensity = 65, DefensiveLineHeight = 58,
+        CurrentForm = 6.7, RecentResults = "W D L W W", SquadStrength = 74,
+        ManagerName = "Serhiy Rebrov", TacticalSetup = "4-3-3",
+        Description = "Resilient team with emotional motivation. Mudryk the star, Zinchenko the leader. Physical and hardworking.",
+        Players = new List<Player>
+        {
+            new() { Id = "mudryk", Name = "Mykhailo Mudryk", Age = 24, Club = "Chelsea", Position = Position.Forward, ShirtNumber = 10, IsKeyStar = true, OverallRating = 82, CurrentForm = 7.6, GoalsPer90 = 0.35, AssistsPer90 = 0.31, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.1, KeyPassesPer90 = 2.1, DribblesPer90 = 3.4, FoulsCommittedPer90 = 0.7, FoulsDrawnPer90 = 2.4, YellowCardsPer90 = 0.12, RedCardsPer90 = 0.0, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 0.4, Description = "Explosive pace and dribbling. Direct runner who creates danger.", PlayingCharacteristics = "Pace, dribbling, direct running, creativity" },
+            new() { Id = "zinchenko", Name = "Oleksandr Zinchenko", Age = 28, Club = "Arsenal", Position = Position.Defender, ShirtNumber = 3, IsCaptain = true, OverallRating = 80, CurrentForm = 7.8, GoalsPer90 = 0.08, AssistsPer90 = 0.28, ShotsPer90 = 0.8, ShotsOnTargetPer90 = 0.3, KeyPassesPer90 = 2.8, DribblesPer90 = 1.4, FoulsCommittedPer90 = 1.2, FoulsDrawnPer90 = 0.8, YellowCardsPer90 = 0.24, RedCardsPer90 = 0.01, TacklesPer90 = 2.4, InterceptionsPer90 = 1.6, AerialDuelsPer90 = 0.8, Description = "Inverted fullback who operates like a midfielder. Leadership and technical quality.", PlayingCharacteristics = "Technical quality, leadership, positioning, build-up" },
+            new() { Id = "lunin", Name = "Andriy Lunin", Age = 25, Club = "Real Madrid", Position = Position.Goalkeeper, ShirtNumber = 1, OverallRating = 82, CurrentForm = 8.0, GoalsPer90 = 0, AssistsPer90 = 0, ShotsPer90 = 0, ShotsOnTargetPer90 = 0, KeyPassesPer90 = 0.4, DribblesPer90 = 0, FoulsCommittedPer90 = 0.1, FoulsDrawnPer90 = 0, YellowCardsPer90 = 0.04, RedCardsPer90 = 0, TacklesPer90 = 0, InterceptionsPer90 = 0, AerialDuelsPer90 = 1.2, Description = "Young elite goalkeeper at Real Madrid. Big game experience.", PlayingCharacteristics = "Reflexes, shot-stopping, distribution, composure" },
+        }
+    };
+
+    // ─── CONMEBOL (dodatkowe) ──────────────────────────────────────────────
+
+    private static Team BuildEcuador() => new()
+    {
+        Id = "ecu", Name = "Ecuador", ShortName = "ECU", FlagEmoji = "🇪🇨",
+        Confederation = "CONMEBOL", Group = "TBD", FifaRanking = 46,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.4, GoalsConcededPerGame = 1.2, ShotsPerGame = 12.8, ShotsOnTargetPerGame = 4.1,
+        FoulsPerGame = 14.1, YellowCardsPerGame = 2.2, RedCardsPerGame = 0.12,
+        Possession = 46.0, PressureIntensity = 62, DefensiveLineHeight = 52,
+        CurrentForm = 6.5, RecentResults = "D W L W W", SquadStrength = 72,
+        ManagerName = "Sebastian Beccacece", TacticalSetup = "4-3-3",
+        Description = "Physical, direct South American style. Caicedo the star in midfield, Valencia up front.",
+        Players = new List<Player>
+        {
+            new() { Id = "caicedo_m", Name = "Moises Caicedo", Age = 23, Club = "Chelsea", Position = Position.Midfielder, ShirtNumber = 10, IsKeyStar = true, OverallRating = 84, CurrentForm = 8.1, GoalsPer90 = 0.12, AssistsPer90 = 0.18, ShotsPer90 = 1.4, ShotsOnTargetPer90 = 0.5, KeyPassesPer90 = 2.1, DribblesPer90 = 1.8, FoulsCommittedPer90 = 2.4, FoulsDrawnPer90 = 1.2, YellowCardsPer90 = 0.48, RedCardsPer90 = 0.03, TacklesPer90 = 5.1, InterceptionsPer90 = 2.8, AerialDuelsPer90 = 2.4, Description = "Elite ball-winner and one of the best defensive midfielders in the world.", PlayingCharacteristics = "Ball-winning, tackling, physicality, pressing" },
+            new() { Id = "enner_v", Name = "Enner Valencia", Age = 35, Club = "Internacional", Position = Position.Forward, ShirtNumber = 13, IsCaptain = true, OverallRating = 76, CurrentForm = 7.0, GoalsPer90 = 0.48, AssistsPer90 = 0.18, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.2, KeyPassesPer90 = 0.6, DribblesPer90 = 1.1, FoulsCommittedPer90 = 1.2, FoulsDrawnPer90 = 1.8, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 2.8, Description = "Ecuador legend. Strong, mobile forward who scores in big games.", PlayingCharacteristics = "Movement, aerial threat, physicality, experience" },
+        }
+    };
+
+    private static Team BuildVenezuela() => new()
+    {
+        Id = "ven", Name = "Venezuela", ShortName = "VEN", FlagEmoji = "🇻🇪",
+        Confederation = "CONMEBOL", Group = "TBD", FifaRanking = 55,
+        PrimaryStyle = PlayingStyle.CounterAttack, SecondaryStyle = PlayingStyle.Direct,
+        GoalsPerGame = 1.3, GoalsConcededPerGame = 1.3, ShotsPerGame = 12.0, ShotsOnTargetPerGame = 3.8,
+        FoulsPerGame = 14.8, YellowCardsPerGame = 2.3, RedCardsPerGame = 0.13,
+        Possession = 44.0, PressureIntensity = 58, DefensiveLineHeight = 48,
+        CurrentForm = 6.2, RecentResults = "L W D W L", SquadStrength = 68,
+        ManagerName = "Fernando Batista", TacticalSetup = "4-4-2",
+        Description = "Emerging South American force. Physical and counter-attacking with growing talent pool.",
+        Players = new List<Player>
+        {
+            new() { Id = "soteldo", Name = "Yeferson Soteldo", Age = 27, Club = "Santos", Position = Position.Forward, ShirtNumber = 11, IsKeyStar = true, OverallRating = 76, CurrentForm = 7.2, GoalsPer90 = 0.38, AssistsPer90 = 0.32, ShotsPer90 = 2.4, ShotsOnTargetPer90 = 1.0, KeyPassesPer90 = 2.1, DribblesPer90 = 3.8, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 3.2, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.0, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 0.4, Description = "Tiny but dangerous. Exceptional dribbler who draws fouls.", PlayingCharacteristics = "Dribbling, pace, creativity, fouls drawn" },
+        }
+    };
+
+    // ─── CONCACAF (dodatkowe) ─────────────────────────────────────────────
+
+    private static Team BuildPanama() => new()
+    {
+        Id = "pan", Name = "Panama", ShortName = "PAN", FlagEmoji = "🇵🇦",
+        Confederation = "CONCACAF", Group = "TBD", FifaRanking = 55,
+        PrimaryStyle = PlayingStyle.Defensive, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.2, GoalsConcededPerGame = 1.3, ShotsPerGame = 11.2, ShotsOnTargetPerGame = 3.5,
+        FoulsPerGame = 15.2, YellowCardsPerGame = 2.5, RedCardsPerGame = 0.15,
+        Possession = 42.0, PressureIntensity = 55, DefensiveLineHeight = 44,
+        CurrentForm = 6.0, RecentResults = "W D L W D", SquadStrength = 65,
+        ManagerName = "Thomas Christiansen", TacticalSetup = "4-4-2",
+        Description = "Compact, defensive and very physical. Relies on set-pieces and counter-attacks.",
+        Players = new List<Player>
+        {
+            new() { Id = "godoy_m", Name = "Maximiliano Godoy", Age = 28, Club = "FC Dallas", Position = Position.Midfielder, ShirtNumber = 10, OverallRating = 72, CurrentForm = 6.8, GoalsPer90 = 0.18, AssistsPer90 = 0.24, ShotsPer90 = 1.4, ShotsOnTargetPer90 = 0.5, KeyPassesPer90 = 1.8, DribblesPer90 = 1.4, FoulsCommittedPer90 = 2.1, FoulsDrawnPer90 = 1.2, YellowCardsPer90 = 0.38, RedCardsPer90 = 0.03, TacklesPer90 = 2.8, InterceptionsPer90 = 1.8, AerialDuelsPer90 = 1.2, Description = "Creative spark in the Panama midfield.", PlayingCharacteristics = "Creativity, work rate, set-pieces" },
+        }
+    };
+
+    private static Team BuildHonduras() => new()
+    {
+        Id = "hon", Name = "Honduras", ShortName = "HON", FlagEmoji = "🇭🇳",
+        Confederation = "CONCACAF", Group = "TBD", FifaRanking = 74,
+        PrimaryStyle = PlayingStyle.Defensive, SecondaryStyle = PlayingStyle.Direct,
+        GoalsPerGame = 1.1, GoalsConcededPerGame = 1.5, ShotsPerGame = 10.8, ShotsOnTargetPerGame = 3.2,
+        FoulsPerGame = 15.8, YellowCardsPerGame = 2.6, RedCardsPerGame = 0.18,
+        Possession = 40.0, PressureIntensity = 52, DefensiveLineHeight = 42,
+        CurrentForm = 5.8, RecentResults = "L D W D L", SquadStrength = 60,
+        ManagerName = "Reinaldo Rueda", TacticalSetup = "4-5-1",
+        Description = "Hard-working and physical. Defend deep, look for set-pieces and counter-attacks.",
+        Players = new List<Player>
+        {
+            new() { Id = "beckeles", Name = "Romell Quioto", Age = 30, Club = "CF Montreal", Position = Position.Forward, ShirtNumber = 11, OverallRating = 70, CurrentForm = 6.4, GoalsPer90 = 0.28, AssistsPer90 = 0.22, ShotsPer90 = 2.0, ShotsOnTargetPer90 = 0.8, KeyPassesPer90 = 1.4, DribblesPer90 = 2.1, FoulsCommittedPer90 = 1.0, FoulsDrawnPer90 = 1.8, YellowCardsPer90 = 0.16, RedCardsPer90 = 0.01, TacklesPer90 = 0.6, InterceptionsPer90 = 0.4, AerialDuelsPer90 = 0.8, Description = "Honduras's best attacking outlet.", PlayingCharacteristics = "Pace, dribbling, direct running" },
+        }
+    };
+
+    private static Team BuildJamaica() => new()
+    {
+        Id = "jam", Name = "Jamaica", ShortName = "JAM", FlagEmoji = "🇯🇲",
+        Confederation = "CONCACAF", Group = "TBD", FifaRanking = 57,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.2, GoalsConcededPerGame = 1.4, ShotsPerGame = 11.4, ShotsOnTargetPerGame = 3.6,
+        FoulsPerGame = 14.4, YellowCardsPerGame = 2.2, RedCardsPerGame = 0.12,
+        Possession = 44.0, PressureIntensity = 60, DefensiveLineHeight = 50,
+        CurrentForm = 6.1, RecentResults = "W L W D W", SquadStrength = 63,
+        ManagerName = "Heimir Hallgrimsson", TacticalSetup = "4-3-3",
+        Description = "Athletic and energetic. Reggae Boyz with Premier League-based talent. Fast and direct.",
+        Players = new List<Player>
+        {
+            new() { Id = "antonio_m", Name = "Michail Antonio", Age = 34, Club = "West Ham United", Position = Position.Forward, ShirtNumber = 9, IsCaptain = true, IsKeyStar = true, OverallRating = 74, CurrentForm = 6.8, GoalsPer90 = 0.41, AssistsPer90 = 0.21, ShotsPer90 = 2.4, ShotsOnTargetPer90 = 1.0, KeyPassesPer90 = 0.8, DribblesPer90 = 1.4, FoulsCommittedPer90 = 1.4, FoulsDrawnPer90 = 2.1, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 3.1, Description = "Physical forward with Premier League experience.", PlayingCharacteristics = "Power, aerial threat, link-up play, experience" },
+        }
+    };
+
+    // ─── CAF (dodatkowe) ──────────────────────────────────────────────────
+
+    private static Team BuildEgypt() => new()
+    {
+        Id = "egy", Name = "Egypt", ShortName = "EGY", FlagEmoji = "🇪🇬",
+        Confederation = "CAF", Group = "TBD", FifaRanking = 35,
+        PrimaryStyle = PlayingStyle.CounterAttack, SecondaryStyle = PlayingStyle.Possession,
+        GoalsPerGame = 1.4, GoalsConcededPerGame = 1.1, ShotsPerGame = 13.1, ShotsOnTargetPerGame = 4.2,
+        FoulsPerGame = 13.4, YellowCardsPerGame = 2.0, RedCardsPerGame = 0.1,
+        Possession = 48.0, PressureIntensity = 62, DefensiveLineHeight = 55,
+        CurrentForm = 6.8, RecentResults = "W W D W L", SquadStrength = 73,
+        ManagerName = "Hossam Hassan", TacticalSetup = "4-2-3-1",
+        Description = "Built around Salah's brilliance. Defensively organized, lethal in counter-attacks through Salah.",
+        Players = new List<Player>
+        {
+            new() { Id = "salah", Name = "Mohamed Salah", Age = 33, Club = "Liverpool", Position = Position.Forward, ShirtNumber = 10, IsCaptain = true, IsKeyStar = true, OverallRating = 91, CurrentForm = 9.0, GoalsPer90 = 0.78, AssistsPer90 = 0.58, ShotsPer90 = 4.4, ShotsOnTargetPer90 = 2.1, KeyPassesPer90 = 3.8, DribblesPer90 = 3.2, FoulsCommittedPer90 = 0.4, FoulsDrawnPer90 = 3.8, YellowCardsPer90 = 0.08, RedCardsPer90 = 0.0, TacklesPer90 = 0.6, InterceptionsPer90 = 0.5, AerialDuelsPer90 = 0.4, Description = "One of the world's best players. Relentless scorer and creator.", PlayingCharacteristics = "Pace, cutting inside, shooting, dribbling, creativity" },
+            new() { Id = "elneny", Name = "Mohamed Elneny", Age = 32, Club = "Arsenal", Position = Position.Midfielder, ShirtNumber = 4, OverallRating = 76, CurrentForm = 7.1, GoalsPer90 = 0.08, AssistsPer90 = 0.12, ShotsPer90 = 0.8, ShotsOnTargetPer90 = 0.3, KeyPassesPer90 = 1.8, DribblesPer90 = 0.8, FoulsCommittedPer90 = 2.1, FoulsDrawnPer90 = 0.8, YellowCardsPer90 = 0.38, RedCardsPer90 = 0.02, TacklesPer90 = 3.2, InterceptionsPer90 = 2.1, AerialDuelsPer90 = 1.4, Description = "Experienced midfielder providing defensive cover for Salah.", PlayingCharacteristics = "Defensive work, ball recovery, experience" },
+        }
+    };
+
+    private static Team BuildIvoryCoast() => new()
+    {
+        Id = "civ", Name = "Ivory Coast", ShortName = "CIV", FlagEmoji = "🇨🇮",
+        Confederation = "CAF", Group = "TBD", FifaRanking = 46,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.5, GoalsConcededPerGame = 1.2, ShotsPerGame = 13.5, ShotsOnTargetPerGame = 4.3,
+        FoulsPerGame = 13.8, YellowCardsPerGame = 2.1, RedCardsPerGame = 0.11,
+        Possession = 46.0, PressureIntensity = 64, DefensiveLineHeight = 54,
+        CurrentForm = 6.9, RecentResults = "W W D L W", SquadStrength = 72,
+        ManagerName = "Emerse Fae", TacticalSetup = "4-3-3",
+        Description = "Physical and direct with creative talent. Sangare dominating midfield, Pepe and Zaha in attack.",
+        Players = new List<Player>
+        {
+            new() { Id = "sangare", Name = "Ibrahim Sangare", Age = 27, Club = "Nottingham Forest", Position = Position.Midfielder, ShirtNumber = 8, IsKeyStar = true, OverallRating = 82, CurrentForm = 7.9, GoalsPer90 = 0.11, AssistsPer90 = 0.14, ShotsPer90 = 1.2, ShotsOnTargetPer90 = 0.4, KeyPassesPer90 = 1.8, DribblesPer90 = 1.4, FoulsCommittedPer90 = 2.8, FoulsDrawnPer90 = 1.1, YellowCardsPer90 = 0.48, RedCardsPer90 = 0.03, TacklesPer90 = 4.8, InterceptionsPer90 = 2.8, AerialDuelsPer90 = 3.2, Description = "Physical midfield powerhouse who dominates opponents.", PlayingCharacteristics = "Tackling, physicality, ball recovery, aerial duels" },
+            new() { Id = "zaha", Name = "Wilfried Zaha", Age = 32, Club = "Al-Qadsiah", Position = Position.Forward, ShirtNumber = 10, OverallRating = 79, CurrentForm = 7.4, GoalsPer90 = 0.38, AssistsPer90 = 0.28, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.1, KeyPassesPer90 = 1.8, DribblesPer90 = 3.8, FoulsCommittedPer90 = 0.6, FoulsDrawnPer90 = 3.4, YellowCardsPer90 = 0.12, RedCardsPer90 = 0.0, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 0.5, Description = "Explosive dribbler who draws fouls and creates danger constantly.", PlayingCharacteristics = "Dribbling, pace, direct running, creativity" },
+        }
+    };
+
+    private static Team BuildGhana() => new()
+    {
+        Id = "gha", Name = "Ghana", ShortName = "GHA", FlagEmoji = "🇬🇭",
+        Confederation = "CAF", Group = "TBD", FifaRanking = 62,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.4, GoalsConcededPerGame = 1.3, ShotsPerGame = 12.8, ShotsOnTargetPerGame = 4.0,
+        FoulsPerGame = 14.2, YellowCardsPerGame = 2.2, RedCardsPerGame = 0.12,
+        Possession = 44.0, PressureIntensity = 60, DefensiveLineHeight = 50,
+        CurrentForm = 6.3, RecentResults = "W D L W W", SquadStrength = 68,
+        ManagerName = "Otto Addo", TacticalSetup = "4-2-3-1",
+        Description = "Athletic and energetic. Black Stars with Premier League-based talent throughout the squad.",
+        Players = new List<Player>
+        {
+            new() { Id = "partey", Name = "Thomas Partey", Age = 32, Club = "Arsenal", Position = Position.Midfielder, ShirtNumber = 5, IsCaptain = true, IsKeyStar = true, OverallRating = 82, CurrentForm = 7.8, GoalsPer90 = 0.11, AssistsPer90 = 0.14, ShotsPer90 = 1.2, ShotsOnTargetPer90 = 0.4, KeyPassesPer90 = 2.1, DribblesPer90 = 1.4, FoulsCommittedPer90 = 2.2, FoulsDrawnPer90 = 1.0, YellowCardsPer90 = 0.42, RedCardsPer90 = 0.02, TacklesPer90 = 4.2, InterceptionsPer90 = 2.6, AerialDuelsPer90 = 2.4, Description = "Physical midfield monster with Arsenal pedigree.", PlayingCharacteristics = "Ball-winning, physicality, range of passing, leadership" },
+            new() { Id = "kudus", Name = "Mohammed Kudus", Age = 24, Club = "West Ham United", Position = Position.Midfielder, ShirtNumber = 10, IsKeyStar = true, OverallRating = 82, CurrentForm = 8.0, GoalsPer90 = 0.42, AssistsPer90 = 0.32, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.2, KeyPassesPer90 = 2.4, DribblesPer90 = 3.1, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 2.8, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.0, TacklesPer90 = 0.8, InterceptionsPer90 = 0.6, AerialDuelsPer90 = 0.6, Description = "Exciting attacking midfielder with goalscoring instinct and dribbling ability.", PlayingCharacteristics = "Dribbling, goalscoring, creativity, directness" },
+        }
+    };
+
+    private static Team BuildSouthAfrica() => new()
+    {
+        Id = "rsa", Name = "South Africa", ShortName = "RSA", FlagEmoji = "🇿🇦",
+        Confederation = "CAF", Group = "TBD", FifaRanking = 60,
+        PrimaryStyle = PlayingStyle.Defensive, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.3, GoalsConcededPerGame = 1.4, ShotsPerGame = 11.8, ShotsOnTargetPerGame = 3.7,
+        FoulsPerGame = 14.1, YellowCardsPerGame = 2.1, RedCardsPerGame = 0.11,
+        Possession = 43.0, PressureIntensity = 58, DefensiveLineHeight = 46,
+        CurrentForm = 6.1, RecentResults = "L W D W D", SquadStrength = 65,
+        ManagerName = "Hugo Broos", TacticalSetup = "4-5-1",
+        Description = "Organized and disciplined. Bafana Bafana defend deep and break quickly. Strong goalkeeper.",
+        Players = new List<Player>
+        {
+            new() { Id = "williams_r", Name = "Ronwen Williams", Age = 32, Club = "Mamelodi Sundowns", Position = Position.Goalkeeper, ShirtNumber = 1, IsKeyStar = true, OverallRating = 77, CurrentForm = 7.6, GoalsPer90 = 0, AssistsPer90 = 0, ShotsPer90 = 0, ShotsOnTargetPer90 = 0, KeyPassesPer90 = 0.3, DribblesPer90 = 0, FoulsCommittedPer90 = 0.1, FoulsDrawnPer90 = 0, YellowCardsPer90 = 0.04, RedCardsPer90 = 0, TacklesPer90 = 0, InterceptionsPer90 = 0, AerialDuelsPer90 = 1.1, Description = "AFCON 2023 Goalkeeper of the Tournament. Shot-stopping excellence.", PlayingCharacteristics = "Reflexes, penalty saves, commanding" },
+            new() { Id = "dolly_k", Name = "Keagan Dolly", Age = 31, Club = "Kaizer Chiefs", Position = Position.Forward, ShirtNumber = 10, OverallRating = 73, CurrentForm = 6.8, GoalsPer90 = 0.31, AssistsPer90 = 0.24, ShotsPer90 = 2.1, ShotsOnTargetPer90 = 0.8, KeyPassesPer90 = 1.8, DribblesPer90 = 2.4, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 2.1, YellowCardsPer90 = 0.12, RedCardsPer90 = 0.0, TacklesPer90 = 0.6, InterceptionsPer90 = 0.4, AerialDuelsPer90 = 0.5, Description = "Creative winger who can unlock defences.", PlayingCharacteristics = "Dribbling, creativity, pace, set-pieces" },
+        }
+    };
+
+    private static Team BuildTunisia() => new()
+    {
+        Id = "tun", Name = "Tunisia", ShortName = "TUN", FlagEmoji = "🇹🇳",
+        Confederation = "CAF", Group = "TBD", FifaRanking = 35,
+        PrimaryStyle = PlayingStyle.Defensive, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.3, GoalsConcededPerGame = 1.1, ShotsPerGame = 12.2, ShotsOnTargetPerGame = 3.8,
+        FoulsPerGame = 14.8, YellowCardsPerGame = 2.3, RedCardsPerGame = 0.13,
+        Possession = 44.0, PressureIntensity = 60, DefensiveLineHeight = 50,
+        CurrentForm = 6.5, RecentResults = "D W W L D", SquadStrength = 70,
+        ManagerName = "Jalel Kadri", TacticalSetup = "4-4-1-1",
+        Description = "Organized, defensive and difficult to beat. Known for tenacity and physicality.",
+        Players = new List<Player>
+        {
+            new() { Id = "msakni", Name = "Youssef Msakni", Age = 33, Club = "Espérance Tunis", Position = Position.Forward, ShirtNumber = 10, OverallRating = 74, CurrentForm = 6.8, GoalsPer90 = 0.28, AssistsPer90 = 0.31, ShotsPer90 = 2.1, ShotsOnTargetPer90 = 0.8, KeyPassesPer90 = 2.4, DribblesPer90 = 2.8, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 2.4, YellowCardsPer90 = 0.12, RedCardsPer90 = 0.0, TacklesPer90 = 0.6, InterceptionsPer90 = 0.4, AerialDuelsPer90 = 0.4, Description = "Tunisia's creative talisman. Skilled dribbler and creator.", PlayingCharacteristics = "Dribbling, creativity, vision, experience" },
+        }
+    };
+
+    private static Team BuildCameroon() => new()
+    {
+        Id = "cmr", Name = "Cameroon", ShortName = "CMR", FlagEmoji = "🇨🇲",
+        Confederation = "CAF", Group = "TBD", FifaRanking = 43,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.HighPress,
+        GoalsPerGame = 1.4, GoalsConcededPerGame = 1.3, ShotsPerGame = 12.8, ShotsOnTargetPerGame = 4.0,
+        FoulsPerGame = 14.4, YellowCardsPerGame = 2.2, RedCardsPerGame = 0.12,
+        Possession = 45.0, PressureIntensity = 64, DefensiveLineHeight = 52,
+        CurrentForm = 6.4, RecentResults = "D W L W W", SquadStrength = 69,
+        ManagerName = "Marc Brys", TacticalSetup = "4-3-3",
+        Description = "Athletic and physical Indomitable Lions. Mbeumo and Toko Ekambi providing pace up front. Anguissa controlling midfield.",
+        Players = new List<Player>
+        {
+            new() { Id = "onana_a", Name = "Andre Onana", Age = 28, Club = "Manchester United", Position = Position.Goalkeeper, ShirtNumber = 1, IsKeyStar = true, OverallRating = 84, CurrentForm = 7.8, GoalsPer90 = 0, AssistsPer90 = 0, ShotsPer90 = 0, ShotsOnTargetPer90 = 0, KeyPassesPer90 = 0.6, DribblesPer90 = 0, FoulsCommittedPer90 = 0.1, FoulsDrawnPer90 = 0, YellowCardsPer90 = 0.05, RedCardsPer90 = 0, TacklesPer90 = 0, InterceptionsPer90 = 0, AerialDuelsPer90 = 1.3, Description = "Elite shot-stopper with excellent feet. Sweeper-keeper style.", PlayingCharacteristics = "Shot-stopping, distribution, sweeping, commanding" },
+            new() { Id = "mbeumo", Name = "Bryan Mbeumo", Age = 25, Club = "Brentford", Position = Position.Forward, ShirtNumber = 11, IsKeyStar = true, OverallRating = 81, CurrentForm = 7.9, GoalsPer90 = 0.52, AssistsPer90 = 0.28, ShotsPer90 = 3.2, ShotsOnTargetPer90 = 1.3, KeyPassesPer90 = 1.8, DribblesPer90 = 2.4, FoulsCommittedPer90 = 0.7, FoulsDrawnPer90 = 2.1, YellowCardsPer90 = 0.12, RedCardsPer90 = 0.0, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 0.6, Description = "Prolific goalscorer who converted to striker. Excellent in front of goal.", PlayingCharacteristics = "Goalscoring, pace, movement, clinical finishing" },
+            new() { Id = "anguissa", Name = "Andre-Frank Zambo Anguissa", Age = 29, Club = "Napoli", Position = Position.Midfielder, ShirtNumber = 8, OverallRating = 83, CurrentForm = 8.1, GoalsPer90 = 0.11, AssistsPer90 = 0.14, ShotsPer90 = 1.2, ShotsOnTargetPer90 = 0.4, KeyPassesPer90 = 1.8, DribblesPer90 = 1.8, FoulsCommittedPer90 = 2.4, FoulsDrawnPer90 = 1.1, YellowCardsPer90 = 0.44, RedCardsPer90 = 0.02, TacklesPer90 = 4.4, InterceptionsPer90 = 2.6, AerialDuelsPer90 = 2.8, Description = "Dominant box-to-box midfielder at Napoli. Physical powerhouse.", PlayingCharacteristics = "Ball-winning, physicality, progressive carrying, energy" },
+        }
+    };
+
+    // ─── AFC (dodatkowe) ──────────────────────────────────────────────────
+
+    private static Team BuildSaudiArabia() => new()
+    {
+        Id = "ksa", Name = "Saudi Arabia", ShortName = "KSA", FlagEmoji = "🇸🇦",
+        Confederation = "AFC", Group = "TBD", FifaRanking = 58,
+        PrimaryStyle = PlayingStyle.CounterAttack, SecondaryStyle = PlayingStyle.Direct,
+        GoalsPerGame = 1.3, GoalsConcededPerGame = 1.4, ShotsPerGame = 11.8, ShotsOnTargetPerGame = 3.6,
+        FoulsPerGame = 14.8, YellowCardsPerGame = 2.3, RedCardsPerGame = 0.13,
+        Possession = 43.0, PressureIntensity = 60, DefensiveLineHeight = 48,
+        CurrentForm = 6.2, RecentResults = "W D W L D", SquadStrength = 66,
+        ManagerName = "Roberto Mancini", TacticalSetup = "4-3-3",
+        Description = "Boosted by Saudi Pro League. Al-Dawsari and Al-Shehri the key forwards. Famous for beating Argentina in 2022.",
+        Players = new List<Player>
+        {
+            new() { Id = "aldawsari", Name = "Salem Al-Dawsari", Age = 32, Club = "Al-Hilal", Position = Position.Forward, ShirtNumber = 10, IsCaptain = true, IsKeyStar = true, OverallRating = 76, CurrentForm = 7.0, GoalsPer90 = 0.38, AssistsPer90 = 0.32, ShotsPer90 = 2.4, ShotsOnTargetPer90 = 1.0, KeyPassesPer90 = 2.1, DribblesPer90 = 2.8, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 2.2, YellowCardsPer90 = 0.14, RedCardsPer90 = 0.0, TacklesPer90 = 0.6, InterceptionsPer90 = 0.4, AerialDuelsPer90 = 0.5, Description = "Saudi Arabia's creative forward and captain. Scored famously vs Argentina in 2022.", PlayingCharacteristics = "Dribbling, creativity, finishing, pace, leadership" },
+        }
+    };
+
+    private static Team BuildIran() => new()
+    {
+        Id = "irn", Name = "Iran", ShortName = "IRN", FlagEmoji = "🇮🇷",
+        Confederation = "AFC", Group = "TBD", FifaRanking = 22,
+        PrimaryStyle = PlayingStyle.Defensive, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.3, GoalsConcededPerGame = 1.1, ShotsPerGame = 12.0, ShotsOnTargetPerGame = 3.8,
+        FoulsPerGame = 14.8, YellowCardsPerGame = 2.4, RedCardsPerGame = 0.13,
+        Possession = 44.0, PressureIntensity = 58, DefensiveLineHeight = 48,
+        CurrentForm = 6.6, RecentResults = "W W D L W", SquadStrength = 72,
+        ManagerName = "Amir Ghalenoei", TacticalSetup = "4-3-3 / 4-1-4-1",
+        Description = "Organized and disciplined. Taremi the star, strong team defensive structure. Consistent Asian qualifier.",
+        Players = new List<Player>
+        {
+            new() { Id = "taremi", Name = "Mehdi Taremi", Age = 32, Club = "Inter Milan", Position = Position.Forward, ShirtNumber = 9, IsCaptain = true, IsKeyStar = true, OverallRating = 82, CurrentForm = 8.0, GoalsPer90 = 0.62, AssistsPer90 = 0.28, ShotsPer90 = 3.4, ShotsOnTargetPer90 = 1.5, KeyPassesPer90 = 1.4, DribblesPer90 = 1.2, FoulsCommittedPer90 = 1.0, FoulsDrawnPer90 = 2.4, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 3.8, Description = "World-class striker at Inter Milan. Clinical and strong in the air.", PlayingCharacteristics = "Finishing, aerial threat, hold-up play, link-up" },
+        }
+    };
+
+    private static Team BuildAustralia() => new()
+    {
+        Id = "aus", Name = "Australia", ShortName = "AUS", FlagEmoji = "🇦🇺",
+        Confederation = "AFC", Group = "TBD", FifaRanking = 24,
+        PrimaryStyle = PlayingStyle.HighPress, SecondaryStyle = PlayingStyle.Direct,
+        GoalsPerGame = 1.6, GoalsConcededPerGame = 1.1, ShotsPerGame = 13.4, ShotsOnTargetPerGame = 4.3,
+        FoulsPerGame = 12.8, YellowCardsPerGame = 1.8, RedCardsPerGame = 0.09,
+        Possession = 49.0, PressureIntensity = 70, DefensiveLineHeight = 62,
+        CurrentForm = 7.0, RecentResults = "W W D W L", SquadStrength = 74,
+        ManagerName = "Tony Popovic", TacticalSetup = "4-3-3",
+        Description = "High-energy Socceroos with European-based talent. Hrustic creative, Duke the goalscorer. Reached 2022 R16.",
+        Players = new List<Player>
+        {
+            new() { Id = "leckie", Name = "Mathew Leckie", Age = 33, Club = "Melbourne City", Position = Position.Forward, ShirtNumber = 7, IsCaptain = true, IsKeyStar = true, OverallRating = 76, CurrentForm = 7.2, GoalsPer90 = 0.32, AssistsPer90 = 0.24, ShotsPer90 = 2.2, ShotsOnTargetPer90 = 0.9, KeyPassesPer90 = 1.2, DribblesPer90 = 2.1, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 1.8, YellowCardsPer90 = 0.16, RedCardsPer90 = 0.0, TacklesPer90 = 0.6, InterceptionsPer90 = 0.4, AerialDuelsPer90 = 0.8, Description = "Australia's captain and talisman. Scored famous winner vs Denmark in 2022 WC.", PlayingCharacteristics = "Pace, directness, leadership, pressing, big game moments" },
+            new() { Id = "hrustic", Name = "Ajdin Hrustic", Age = 28, Club = "Columbus Crew", Position = Position.Midfielder, ShirtNumber = 10, OverallRating = 74, CurrentForm = 7.0, GoalsPer90 = 0.18, AssistsPer90 = 0.31, ShotsPer90 = 1.6, ShotsOnTargetPer90 = 0.6, KeyPassesPer90 = 2.8, DribblesPer90 = 1.8, FoulsCommittedPer90 = 1.0, FoulsDrawnPer90 = 1.4, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.0, TacklesPer90 = 1.4, InterceptionsPer90 = 1.0, AerialDuelsPer90 = 0.6, Description = "Creative midfield orchestrator. Set-piece specialist.", PlayingCharacteristics = "Creativity, passing, set-pieces, technical quality" },
+        }
+    };
+
+    private static Team BuildQatar() => new()
+    {
+        Id = "qat", Name = "Qatar", ShortName = "QAT", FlagEmoji = "🇶🇦",
+        Confederation = "AFC", Group = "TBD", FifaRanking = 37,
+        PrimaryStyle = PlayingStyle.Possession, SecondaryStyle = PlayingStyle.Defensive,
+        GoalsPerGame = 1.2, GoalsConcededPerGame = 1.4, ShotsPerGame = 11.8, ShotsOnTargetPerGame = 3.5,
+        FoulsPerGame = 13.4, YellowCardsPerGame = 2.0, RedCardsPerGame = 0.1,
+        Possession = 50.0, PressureIntensity = 60, DefensiveLineHeight = 54,
+        CurrentForm = 6.0, RecentResults = "W D L W D", SquadStrength = 68,
+        ManagerName = "Marquez Lopez", TacticalSetup = "4-3-3",
+        Description = "Built for possession football through Aspire Academy. Afif the creative star, Almoez Ali the target man.",
+        Players = new List<Player>
+        {
+            new() { Id = "afif", Name = "Akram Afif", Age = 28, Club = "Al-Sadd", Position = Position.Forward, ShirtNumber = 11, IsKeyStar = true, OverallRating = 77, CurrentForm = 7.2, GoalsPer90 = 0.42, AssistsPer90 = 0.38, ShotsPer90 = 2.4, ShotsOnTargetPer90 = 1.0, KeyPassesPer90 = 2.8, DribblesPer90 = 3.1, FoulsCommittedPer90 = 0.6, FoulsDrawnPer90 = 3.1, YellowCardsPer90 = 0.10, RedCardsPer90 = 0.0, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 0.4, Description = "AFC Player of the Year. Creative winger who draws fouls and creates danger.", PlayingCharacteristics = "Dribbling, creativity, pace, fouls drawn" },
+        }
+    };
+
+    private static Team BuildIraq() => new()
+    {
+        Id = "irq", Name = "Iraq", ShortName = "IRQ", FlagEmoji = "🇮🇶",
+        Confederation = "AFC", Group = "TBD", FifaRanking = 58,
+        PrimaryStyle = PlayingStyle.CounterAttack, SecondaryStyle = PlayingStyle.Defensive,
+        GoalsPerGame = 1.2, GoalsConcededPerGame = 1.4, ShotsPerGame = 11.5, ShotsOnTargetPerGame = 3.5,
+        FoulsPerGame = 15.1, YellowCardsPerGame = 2.4, RedCardsPerGame = 0.14,
+        Possession = 43.0, PressureIntensity = 57, DefensiveLineHeight = 46,
+        CurrentForm = 5.9, RecentResults = "W L D W L", SquadStrength = 64,
+        ManagerName = "Jesus Casas", TacticalSetup = "4-2-3-1",
+        Description = "Disciplined team with passionate support. Physical and direct, hard to break down.",
+        Players = new List<Player>
+        {
+            new() { Id = "mohanad_ali", Name = "Mohanad Ali", Age = 28, Club = "Al-Quwa Al-Jawiya", Position = Position.Forward, ShirtNumber = 10, OverallRating = 70, CurrentForm = 6.5, GoalsPer90 = 0.38, AssistsPer90 = 0.21, ShotsPer90 = 2.2, ShotsOnTargetPer90 = 0.9, KeyPassesPer90 = 1.2, DribblesPer90 = 1.8, FoulsCommittedPer90 = 1.0, FoulsDrawnPer90 = 1.6, YellowCardsPer90 = 0.16, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 2.2, Description = "Iraq's main goal threat.", PlayingCharacteristics = "Finishing, movement, pressing" },
+        }
+    };
+
+    private static Team BuildJordan() => new()
+    {
+        Id = "jor", Name = "Jordan", ShortName = "JOR", FlagEmoji = "🇯🇴",
+        Confederation = "AFC", Group = "TBD", FifaRanking = 68,
+        PrimaryStyle = PlayingStyle.Defensive, SecondaryStyle = PlayingStyle.CounterAttack,
+        GoalsPerGame = 1.1, GoalsConcededPerGame = 1.3, ShotsPerGame = 11.0, ShotsOnTargetPerGame = 3.3,
+        FoulsPerGame = 14.8, YellowCardsPerGame = 2.3, RedCardsPerGame = 0.13,
+        Possession = 42.0, PressureIntensity = 56, DefensiveLineHeight = 44,
+        CurrentForm = 5.8, RecentResults = "D W L W D", SquadStrength = 62,
+        ManagerName = "Hashim Mustafa", TacticalSetup = "4-4-2",
+        Description = "Organized and disciplined. Surprised everyone reaching 2023 Asian Cup Final. Physical and determined.",
+        Players = new List<Player>
+        {
+            new() { Id = "tamari", Name = "Musa Al-Tamari", Age = 28, Club = "Montpellier", Position = Position.Forward, ShirtNumber = 7, IsKeyStar = true, OverallRating = 72, CurrentForm = 6.8, GoalsPer90 = 0.34, AssistsPer90 = 0.28, ShotsPer90 = 2.1, ShotsOnTargetPer90 = 0.8, KeyPassesPer90 = 1.8, DribblesPer90 = 2.4, FoulsCommittedPer90 = 0.8, FoulsDrawnPer90 = 2.2, YellowCardsPer90 = 0.12, RedCardsPer90 = 0.0, TacklesPer90 = 0.4, InterceptionsPer90 = 0.3, AerialDuelsPer90 = 0.5, Description = "Jordan's most exciting player. Fast and direct winger.", PlayingCharacteristics = "Pace, dribbling, directness, creativity" },
+        }
+    };
+
+    // ─── OFC ──────────────────────────────────────────────────────────────
+
+    private static Team BuildNewZealand() => new()
+    {
+        Id = "nzl", Name = "New Zealand", ShortName = "NZL", FlagEmoji = "🇳🇿",
+        Confederation = "OFC", Group = "TBD", FifaRanking = 106,
+        PrimaryStyle = PlayingStyle.Direct, SecondaryStyle = PlayingStyle.Defensive,
+        GoalsPerGame = 0.9, GoalsConcededPerGame = 1.8, ShotsPerGame = 9.8, ShotsOnTargetPerGame = 2.8,
+        FoulsPerGame = 13.2, YellowCardsPerGame = 1.8, RedCardsPerGame = 0.09,
+        Possession = 41.0, PressureIntensity = 54, DefensiveLineHeight = 42,
+        CurrentForm = 5.0, RecentResults = "L D W L D", SquadStrength = 55,
+        ManagerName = "Darren Bazeley", TacticalSetup = "4-5-1",
+        Description = "All Whites representing OFC. Physical and determined. Chris Wood the experienced target man.",
+        Players = new List<Player>
+        {
+            new() { Id = "wood_c", Name = "Chris Wood", Age = 33, Club = "Nottingham Forest", Position = Position.Forward, ShirtNumber = 9, IsCaptain = true, IsKeyStar = true, OverallRating = 76, CurrentForm = 6.8, GoalsPer90 = 0.48, AssistsPer90 = 0.14, ShotsPer90 = 2.8, ShotsOnTargetPer90 = 1.1, KeyPassesPer90 = 0.5, DribblesPer90 = 0.4, FoulsCommittedPer90 = 1.1, FoulsDrawnPer90 = 1.8, YellowCardsPer90 = 0.18, RedCardsPer90 = 0.01, TacklesPer90 = 0.4, InterceptionsPer90 = 0.2, AerialDuelsPer90 = 4.2, Description = "New Zealand's experienced Premier League striker. Aerial specialist.", PlayingCharacteristics = "Aerial threat, hold-up play, physicality, experience" },
         }
     };
 

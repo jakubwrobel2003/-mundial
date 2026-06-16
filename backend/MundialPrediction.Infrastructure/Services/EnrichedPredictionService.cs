@@ -217,6 +217,15 @@ public class EnrichedPredictionService
             .ToListAsync();
     }
 
+    // Zwraca ostatnie N analiz (wszystkich par)
+    public async Task<List<PredictionHistoryEntity>> GetAllHistoryAsync(int limit = 20)
+    {
+        return await _db.PredictionHistory
+            .OrderByDescending(h => h.CreatedAt)
+            .Take(Math.Min(limit, 50))
+            .ToListAsync();
+    }
+
     // Pozwala ręcznie dodać dokument do RAG bazy wiedzy
     public async Task AddKnowledgeAsync(string entityId, string docType, string title, string content, string? sourceUrl = null)
     {

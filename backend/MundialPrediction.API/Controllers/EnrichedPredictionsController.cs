@@ -46,6 +46,16 @@ public class EnrichedPredictionsController : ControllerBase
     }
 
     /// <summary>
+    /// Ostatnie N analiz (wszystkich par)
+    /// </summary>
+    [HttpGet("history")]
+    public async Task<IActionResult> GetAllHistory([FromQuery] int limit = 20)
+    {
+        var history = await _service.GetAllHistoryAsync(limit);
+        return Ok(history);
+    }
+
+    /// <summary>
     /// Historia predykcji dla danej pary drużyn
     /// </summary>
     [HttpGet("{homeTeamId}/{awayTeamId}/history")]
