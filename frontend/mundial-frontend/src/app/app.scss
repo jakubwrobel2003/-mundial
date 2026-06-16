@@ -524,6 +524,7 @@ body {
   align-items: center; gap: .75rem;
   padding: .55rem .85rem;
   background: $bg3; border: 1px solid $border; border-radius: $radius-sm;
+  color: $text;
   cursor: pointer; width: 100%; text-align: left;
   transition: border-color .15s, background .15s;
 
