@@ -35,7 +35,7 @@ public class FootballDataClient
         HttpClient http,
         IMemoryCache cache,
         ILogger<FootballDataClient> logger,
-        int cacheSec = 120,
+        int cacheSec = 3600,
         int ratePerMin = 10)
     {
         _http = http;

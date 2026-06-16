@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MundialPrediction.Core.Interfaces;
+using MundialPrediction.Infrastructure.Database;
+using MundialPrediction.Infrastructure.Database.Entities;
 using MundialPrediction.Infrastructure.ExternalApis;
+using System.Text.Json;
 
 namespace MundialPrediction.API.Controllers;
 
@@ -10,7 +14,14 @@ public class MatchesController : ControllerBase
 {
     private readonly FootballDataClient _fd;
     private readonly ITeamRepository _teams;
+    private readonly MundialDbContext _db;
     private readonly ILogger<MatchesController> _logger;
+
+    private static readonly JsonSerializerOptions _camel =
+        new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+    private const string SCHEDULE_CACHE_KEY = "wc2026:schedule:v2";
+    private static readonly TimeSpan SCHEDULE_TTL = TimeSpan.FromHours(6);
 
     // Mapowanie stage kodów fd.org → nasze etapy
     private static readonly Dictionary<string, string> StageMap = new(StringComparer.OrdinalIgnoreCase)
@@ -24,10 +35,11 @@ public class MatchesController : ControllerBase
         ["FINAL"]          = "Final",
     };
 
-    public MatchesController(FootballDataClient fd, ITeamRepository teams, ILogger<MatchesController> logger)
+    public MatchesController(FootballDataClient fd, ITeamRepository teams, MundialDbContext db, ILogger<MatchesController> logger)
     {
         _fd = fd;
         _teams = teams;
+        _db = db;
         _logger = logger;
     }
 
@@ -39,6 +51,18 @@ public class MatchesController : ControllerBase
     {
         try
         {
+            // SQLite persistent cache – przeżywa restarty Railway (TTL 6h)
+            var sqlCached = await _db.ApiCache
+                .Where(c => c.CacheKey == SCHEDULE_CACHE_KEY && c.ExpiresAt > DateTime.UtcNow)
+                .FirstOrDefaultAsync();
+
+            if (sqlCached != null)
+            {
+                _logger.LogInformation("SQLite cache hit: terminarz WC 2026");
+                var cached = JsonSerializer.Deserialize<List<WcMatchDto>>(sqlCached.ResponseJson, _camel);
+                return Ok(cached);
+            }
+
             var raw = await _fd.GetMatchesAsync();
             if (raw == null)
                 return StatusCode(503, new { error = "football-data.org niedostępne lub brak klucza API" });
@@ -131,7 +155,17 @@ public class MatchesController : ControllerBase
                 .ThenBy(m => m.UtcDate)
                 .ToList();
 
-            _logger.LogInformation("Terminarz WC 2026: {Count} meczów", result.Count);
+            _logger.LogInformation("Terminarz WC 2026: {Count} meczów – zapisuję do SQLite cache", result.Count);
+
+            // Zapisz do SQLite cache
+            var json = JsonSerializer.Serialize(result, _camel);
+            var entry = await _db.ApiCache.FindAsync(SCHEDULE_CACHE_KEY);
+            if (entry == null)
+                _db.ApiCache.Add(new ApiCacheEntity { CacheKey = SCHEDULE_CACHE_KEY, ResponseJson = json, CachedAt = DateTime.UtcNow, ExpiresAt = DateTime.UtcNow.Add(SCHEDULE_TTL) });
+            else
+                (entry.ResponseJson, entry.CachedAt, entry.ExpiresAt) = (json, DateTime.UtcNow, DateTime.UtcNow.Add(SCHEDULE_TTL));
+            await _db.SaveChangesAsync();
+
             return Ok(result);
         }
         catch (Exception ex)

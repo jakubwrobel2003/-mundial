@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Team } from '../models/team.model';
 import { MatchPrediction } from '../models/prediction.model';
 
@@ -103,7 +104,23 @@ export class ApiService {
   }
 
   getWc2026Schedule(): Observable<WcMatch[]> {
-    return this.http.get<WcMatch[]>(`${this.base}/matches/wc2026`);
+    const LS_KEY = 'wc2026_schedule_v1';
+    const TTL_MS = 60 * 60 * 1000; // 1 godzina
+
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        const { data, ts } = JSON.parse(raw) as { data: WcMatch[]; ts: number };
+        if (Date.now() - ts < TTL_MS) return of(data);
+      }
+    } catch { /* localStorage niedostępny – przejdź do HTTP */ }
+
+    return this.http.get<WcMatch[]>(`${this.base}/matches/wc2026`).pipe(
+      tap(data => {
+        try { localStorage.setItem(LS_KEY, JSON.stringify({ data, ts: Date.now() })); }
+        catch { /* quota exceeded – ignoruj */ }
+      })
+    );
   }
 
   analyzeEnriched(
