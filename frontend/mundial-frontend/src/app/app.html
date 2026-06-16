@@ -788,16 +788,46 @@
     </section>
   }
 
-  <!-- Loading overlay -->
+  <!-- Loading overlay – Poisson -->
+  @if (loading && !prediction) {
+    <div class="loading-overlay">
+      <div class="loading-card loading-card--slim">
+        <div class="ld-ring"></div>
+        <p class="ld-title">Obliczam predykcję…</p>
+        <p class="ld-sub">⚽ Poisson xG · macierz celów · prawdopodobieństwa</p>
+      </div>
+    </div>
+  }
+
+  <!-- Loading overlay – pełna analiza AI -->
   @if (enrichedLoading && !enriched) {
     <div class="loading-overlay">
       <div class="loading-card">
-        <div class="ld-spinner"></div>
-        <p class="ld-title">Pełna analiza AI…</p>
-        <p class="ld-sub">Pobieranie danych z football-data.org, Tavily i Claude AI</p>
-        <div class="ld-steps">
-          <span>⚽ Poisson</span><span>📅 EC/WC Historia</span><span>👤 Stats klubowe</span><span>🌍 Tavily</span><span>🤖 Claude</span>
+        <div class="ld-ring"></div>
+        <p class="ld-title">Pełna analiza AI w toku…</p>
+
+        <div class="ld-steps-list">
+          @for (step of analysisSteps; track step.label; let i = $index) {
+            <div class="ld-step"
+                 [class.ld-step--done]="i < loadingStep"
+                 [class.ld-step--active]="i === loadingStep"
+                 [class.ld-step--pending]="i > loadingStep">
+              <span class="ld-step-icon">
+                @if (i < loadingStep) { <span class="ld-check">✓</span> }
+                @else { {{ step.icon }} }
+              </span>
+              <div class="ld-step-body">
+                <span class="ld-step-label">{{ step.label }}</span>
+                <span class="ld-step-detail">{{ step.detail }}</span>
+              </div>
+              @if (i === loadingStep) {
+                <span class="ld-dots"><span>.</span><span>.</span><span>.</span></span>
+              }
+            </div>
+          }
         </div>
+
+        <p class="ld-hint">⏱ Analiza zajmuje zwykle 20–45 sekund</p>
       </div>
     </div>
   }

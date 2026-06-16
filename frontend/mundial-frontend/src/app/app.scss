@@ -455,21 +455,83 @@ body {
 
 /* ── Loading overlay ────────────────────────────────────────────────────── */
 .loading-overlay {
-  position: fixed; inset: 0; background: rgba(13,17,23,.85);
+  position: fixed; inset: 0; background: rgba(13,17,23,.88);
   display: flex; align-items: center; justify-content: center; z-index: 1000;
+  backdrop-filter: blur(2px);
 }
 .loading-card {
   background: $bg2; border: 1px solid $border; border-radius: $radius;
-  padding: 2.5rem; text-align: center; max-width: 400px;
+  padding: 2rem 2.5rem; text-align: center; width: 420px; max-width: 96vw;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+
+  &--slim { width: 320px; }
 }
-.ld-spinner {
-  width: 48px; height: 48px; border: 3px solid $border; border-top-color: $home;
-  border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 1.25rem;
+
+// Pierścień spinner (zastępuje stary .ld-spinner)
+.ld-ring {
+  width: 52px; height: 52px; margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  border: 3px solid $border;
+  border-top-color: $home;
+  border-right-color: lighten($home, 15%);
+  animation: spin .7s linear infinite;
 }
-.ld-title { font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }
-.ld-sub { font-size: .8rem; color: $muted; margin-bottom: 1.25rem; }
-.ld-steps { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center;
-  span { font-size: .75rem; padding: 3px 9px; background: $bg3; border: 1px solid $border; border-radius: 20px; color: $muted; }
+
+.ld-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
+.ld-sub   { font-size: .82rem; color: $muted; }
+.ld-hint  { font-size: .75rem; color: $muted; margin-top: 1.25rem; opacity: .7; }
+
+// Lista kroków
+.ld-steps-list {
+  display: flex; flex-direction: column; gap: .45rem;
+  text-align: left; margin-bottom: .5rem;
+}
+
+.ld-step {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .5rem .75rem; border-radius: $radius-sm;
+  border: 1px solid transparent;
+  transition: all .3s;
+
+  &--done {
+    opacity: .5;
+    .ld-step-label { text-decoration: line-through; }
+  }
+
+  &--active {
+    background: rgba($home, .12);
+    border-color: rgba($home, .35);
+    .ld-step-label { color: lighten($home, 25%); font-weight: 700; }
+    .ld-step-icon  { color: $home; }
+  }
+
+  &--pending { opacity: .35; }
+}
+
+.ld-step-icon {
+  font-size: 1.2rem; width: 1.6rem; text-align: center; flex-shrink: 0;
+}
+.ld-check { color: $green; font-weight: 700; }
+
+.ld-step-body {
+  flex: 1; display: flex; flex-direction: column; gap: 1px;
+}
+.ld-step-label  { font-size: .85rem; font-weight: 600; }
+.ld-step-detail { font-size: .72rem; color: $muted; }
+
+// Animowane kropki "..."
+.ld-dots {
+  display: flex; gap: 2px; align-items: center;
+  span {
+    font-size: 1.2rem; line-height: 1; color: $home;
+    animation: dotBlink 1.2s infinite;
+    &:nth-child(2) { animation-delay: .2s; }
+    &:nth-child(3) { animation-delay: .4s; }
+  }
+}
+@keyframes dotBlink {
+  0%, 80%, 100% { opacity: .2; }
+  40%           { opacity: 1; }
 }
 
 /* ── Terminarz ──────────────────────────────────────────────────────────── */

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -13,7 +13,7 @@ import { MatchPrediction, PlayerPrediction } from './models/prediction.model';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App implements OnInit {
+export class App implements OnInit, OnDestroy {
   teams: Team[] = [];
   homeTeamId = '';
   awayTeamId = '';
@@ -26,6 +26,19 @@ export class App implements OnInit {
   enrichedLoading = false;
   error = '';
   activeTab = 'overview';
+
+  // Loading steps dla pełnej analizy AI
+  loadingStep = 0;
+  private stepTimeouts: ReturnType<typeof setTimeout>[] = [];
+
+  readonly analysisSteps = [
+    { icon: '⚽', label: 'Poisson xG',            detail: 'Macierz celów, prawdopodobieństwa wyników' },
+    { icon: '📅', label: 'Historia EC / MŚ',       detail: 'Mecze historyczne z football-data.org' },
+    { icon: '👤', label: 'Statystyki zawodników',  detail: 'Strzelcy i asysty z lig klubowych' },
+    { icon: '📚', label: 'Baza wiedzy (RAG)',       detail: 'Taktyka, kontekst, dane o drużynach' },
+    { icon: '🌍', label: 'Tavily – web search',    detail: 'Aktualna forma, urazy, składy, newsy' },
+    { icon: '🤖', label: 'Claude AI syntezuje',    detail: 'Analiza taktyczna i prognoza końcowa' },
+  ];
   useWeb = true;
   useFootballData = true;
 
@@ -146,21 +159,43 @@ export class App implements OnInit {
     this.error = '';
     this.enriched = null;
     this.prediction = null;
+    this.startSteps();
 
     this.api
       .analyzeEnriched(this.homeTeamId, this.awayTeamId, this.stage, this.useWeb, this.useFootballData)
       .subscribe({
         next: (result) => {
+          this.stopSteps();
           this.enriched = result;
           this.prediction = result.basePrediction;
           this.enrichedLoading = false;
           this.activeTab = 'claude';
         },
         error: () => {
+          this.stopSteps();
           this.error = 'Pełna analiza nie powiodła się. Sprawdź klucze API w .env.';
           this.enrichedLoading = false;
         },
       });
+  }
+
+  private startSteps() {
+    this.loadingStep = 0;
+    // Timing kroków: Poisson szybki, historia/stats wolniejsze, Claude najdłuższy
+    const delays = [0, 3000, 7000, 12000, 17000, 23000];
+    delays.forEach((ms, i) => {
+      this.stepTimeouts.push(setTimeout(() => { this.loadingStep = i; }, ms));
+    });
+  }
+
+  private stopSteps() {
+    this.stepTimeouts.forEach(t => clearTimeout(t));
+    this.stepTimeouts = [];
+    this.loadingStep = this.analysisSteps.length - 1;
+  }
+
+  ngOnDestroy() {
+    this.stopSteps();
   }
 
   swapTeams() {
