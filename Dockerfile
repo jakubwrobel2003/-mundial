@@ -2,9 +2,11 @@
 FROM node:20-alpine AS frontend-build
 WORKDIR /app
 COPY frontend/mundial-frontend/package*.json ./
-RUN npm ci --prefer-offline
+RUN npm ci
 COPY frontend/mundial-frontend/ .
 RUN npm run build
+# Diagnostyka — widoczna w Railway build logs
+RUN echo "=== Angular dist ===" && find dist -type f | sort | head -40
 
 # ── Stage 2: Build .NET ───────────────────────────────────────────────────────
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS backend-build
@@ -28,10 +30,11 @@ RUN apt-get update \
 # Backend binaries
 COPY --from=backend-build /app/publish .
 
-# Angular SPA → wwwroot (serwowane przez ASP.NET Core Static Files)
-COPY --from=frontend-build /app/dist/mundial-frontend/browser ./wwwroot
+# Angular SPA — z angular.json: outputPath.browser="" → pliki płasko w dist/mundial-frontend/
+COPY --from=frontend-build /app/dist/mundial-frontend ./wwwroot
 
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV DOTNET_ENVIRONMENT=Production
 ENV DATABASE_PATH=/data/mundial2026.db
 
 EXPOSE 8080
