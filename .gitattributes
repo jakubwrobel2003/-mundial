@@ -1,0 +1,7 @@
+* text=auto
+
+# Pliki które MUSZĄ mieć LF (shell scripts, Dockerfiles)
+*.sh text eol=lf
+Dockerfile* text eol=lf
+entrypoint.sh text eol=lf
+nginx.conf text eol=lf
