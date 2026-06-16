@@ -71,6 +71,11 @@ var dbPath = Environment.GetEnvironmentVariable("DATABASE_PATH")
              ?? builder.Configuration["Database:Path"]
              ?? "./mundial2026.db";
 
+// Upewnij się że katalog bazy danych istnieje (ważne gdy Volume nie jest zamontowane)
+var dbDir = Path.GetDirectoryName(dbPath);
+if (!string.IsNullOrEmpty(dbDir) && !Directory.Exists(dbDir))
+    Directory.CreateDirectory(dbDir);
+
 builder.Services.AddDbContext<MundialDbContext>(opt =>
     opt.UseSqlite($"Data Source={dbPath}"));
 
