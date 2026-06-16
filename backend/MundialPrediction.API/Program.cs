@@ -180,6 +180,17 @@ app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mundial 2026 API v1"));
 
 app.UseCors("Angular");
+
+// SPA static files – tylko gdy wwwroot istnieje (produkcja / Docker)
+if (Directory.Exists(Path.Combine(app.Environment.ContentRootPath, "wwwroot")))
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+
 app.MapControllers();
+
+// Angular router fallback – /api/* obsłużone przez kontrolery powyżej
+app.MapFallbackToFile("index.html");
 
 app.Run();

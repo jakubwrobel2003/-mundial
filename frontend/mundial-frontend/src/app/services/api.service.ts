@@ -79,7 +79,7 @@ export interface WcMatch {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  // Na Railway nginx proxy przekierowuje /api/ → backend, lokalnie → localhost:5000
+  // Lokalnie: Angular dev server (:4200) → backend (:5000). Produkcja: same-origin /api
   private readonly base = window.location.hostname === 'localhost'
     ? 'http://localhost:5000/api'
     : '/api';
