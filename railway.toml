@@ -1,49 +1,10 @@
-# Railway – konfiguracja monorepo
-# Dokumentacja: https://docs.railway.com/reference/config-as-code
-
 [build]
 builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+watchPatterns = ["backend/**", "frontend/**"]
 
-# ── Serwis: backend ──────────────────────────────────────────────────────────
-# W Railway Dashboard: New Service → GitHub repo → ustaw Root Directory = backend
-# lub użyj poniższego (jeśli Railway obsługuje multiserwis z jednego railway.toml)
-
-[[services]]
-name = "backend"
-source = "backend"
-
-[services.build]
-dockerfilePath = "backend/Dockerfile"
-
-[services.deploy]
+[deploy]
 healthcheckPath = "/swagger/index.html"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 3
-
-# Zmienne środowiskowe ustawiasz w Railway Dashboard → Variables
-# Wymagane:
-#   FOOTBALL_DATA_API_KEY
-#   TAVILY_API_KEY
-#   ANTHROPIC_API_KEY
-# Railway automatycznie dostarcza:
-#   PORT
-# Opcjonalne (już mają wartości domyślne):
-#   DATABASE_PATH=/data/mundial2026.db   ← zamontuj Volume na /data
-#   CLAUDE_MODEL=claude-sonnet-4-6
-#   FRONTEND_URL=https://twoj-frontend.up.railway.app
-
-[[services]]
-name = "frontend"
-source = "frontend/mundial-frontend"
-
-[services.build]
-dockerfilePath = "frontend/mundial-frontend/Dockerfile"
-
-[services.deploy]
-healthcheckPath = "/"
-healthcheckTimeout = 15
-
-# Wymagana zmienna:
-#   BACKEND_INTERNAL_URL=http://backend.railway.internal:${{backend.PORT}}
-#   (Railway Reference Variable – wewnętrzna sieć, zero latency)
+restartPolicyMaxRetries = 10
