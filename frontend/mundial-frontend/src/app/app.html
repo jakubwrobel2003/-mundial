@@ -1,0 +1,805 @@
+<!-- MUNDIAL 2026 – Prediction App -->
+<div class="app-shell">
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⚽</span>
+        <div>
+          <span class="logo-title">Mundial 2026</span>
+          <span class="logo-sub">AI Prediction Engine</span>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-ai">Claude AI</span>
+        <span class="badge badge-data">football-data.org</span>
+        <span class="badge badge-live">Tavily Live</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ SELECTOR ══════════════════════════════════════════════════════════ -->
+  <section class="selector-section">
+    <div class="selector-card">
+
+      <!-- Mode toggle -->
+      <div class="mode-toggle">
+        <button class="mode-btn" [class.active]="selectorMode === 'schedule'" (click)="selectorMode='schedule'">
+          📅 Terminarz MŚ 2026
+        </button>
+        <button class="mode-btn" [class.active]="selectorMode === 'manual'" (click)="selectorMode='manual'">
+          ✏️ Wybierz ręcznie
+        </button>
+      </div>
+
+      <!-- ── TERMINARZ ────────────────────────────────────────────────────── -->
+      @if (selectorMode === 'schedule') {
+        <div class="schedule-section">
+          @if (scheduleLoading) {
+            <div class="schedule-loading"><span class="spinner"></span> Ładowanie terminarza…</div>
+          }
+          @if (scheduleError) {
+            <div class="error-banner">⚠️ {{ scheduleError }}</div>
+          }
+          @if (!scheduleLoading && schedule.length) {
+
+            <!-- Filtry -->
+            <div class="schedule-filters">
+              <div class="sf-group">
+                <button class="sf-btn" [class.active]="scheduleFilter === 'all'"      (click)="scheduleFilter='all'">Wszystkie</button>
+                <button class="sf-btn" [class.active]="scheduleFilter === 'upcoming'" (click)="scheduleFilter='upcoming'">Nadchodzące</button>
+                <button class="sf-btn" [class.active]="scheduleFilter === 'finished'" (click)="scheduleFilter='finished'">Zakończone</button>
+              </div>
+              <select class="stage-select stage-filter" [(ngModel)]="scheduleStageFilter">
+                @for (s of scheduleStages; track s) {
+                  <option [value]="s">{{ s === 'all' ? 'Wszystkie etapy' : s }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Lista meczów -->
+            <div class="schedule-list">
+              @for (grp of groupedSchedule; track grp.stage + grp.group + grp.matchday) {
+                <div class="schedule-group">
+                  <div class="sg-header">
+                    <span class="sg-stage">{{ grp.stage }}</span>
+                    @if (grp.group) { <span class="sg-group">{{ grp.group }}</span> }
+                    @if (grp.matchday) { <span class="sg-day">kolejka {{ grp.matchday }}</span> }
+                  </div>
+                  <div class="sg-matches">
+                    @for (m of grp.matches; track m.utcDate + m.homeTeam.fdName) {
+                      <button
+                        class="match-row"
+                        [class.selected]="homeTeamId === m.homeTeam.id && awayTeamId === m.awayTeam.id"
+                        [class.finished]="m.status === 'FINISHED'"
+                        [class.live]="m.status === 'IN_PLAY' || m.status === 'PAUSED'"
+                        [class.disabled]="!m.homeTeam.known || !m.awayTeam.known"
+                        [disabled]="!m.homeTeam.known || !m.awayTeam.known"
+                        (click)="selectMatch(m)"
+                        [title]="!m.homeTeam.known || !m.awayTeam.known ? 'Drużyna nie jest w bazie danych' : 'Kliknij aby wybrać mecz'"
+                      >
+                        <span class="mr-date">{{ formatMatchDate(m.utcDate) }}</span>
+
+                        <div class="mr-teams">
+                          <span class="mr-team home">
+                            <span class="mr-flag">{{ m.homeTeam.flagEmoji }}</span>
+                            <span class="mr-name">{{ m.homeTeam.name }}</span>
+                          </span>
+
+                          <span class="mr-score">
+                            @if (m.status === 'FINISHED' && m.scoreHome !== null) {
+                              <strong>{{ m.scoreHome }} – {{ m.scoreAway }}</strong>
+                            } @else if (m.status === 'IN_PLAY' || m.status === 'PAUSED') {
+                              <span class="live-dot">●</span>
+                            } @else {
+                              <span class="mr-vs">vs</span>
+                            }
+                          </span>
+
+                          <span class="mr-team away">
+                            <span class="mr-name">{{ m.awayTeam.name }}</span>
+                            <span class="mr-flag">{{ m.awayTeam.flagEmoji }}</span>
+                          </span>
+                        </div>
+
+                        <span class="mr-status" [class]="statusClass(m.status)">{{ statusLabel(m.status) }}</span>
+                        @if (m.venue) { <span class="mr-venue">{{ m.venue }}</span> }
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ── WYBIERZ RĘCZNIE ──────────────────────────────────────────────── -->
+      @if (selectorMode === 'manual') {
+        <div class="team-row">
+          <div class="team-pick">
+            <label>Gospodarz</label>
+            <select [(ngModel)]="homeTeamId" class="team-select">
+              <option value="">-- Wybierz drużynę --</option>
+              @for (t of teams; track t.id) {
+                <option [value]="t.id" [disabled]="t.id === awayTeamId">
+                  {{ t.flagEmoji }} {{ t.name }} (#{{ t.fifaRanking }})
+                </option>
+              }
+            </select>
+            @if (teamById(homeTeamId); as ht) {
+              <div class="team-mini">
+                <span class="flag-xl">{{ ht.flagEmoji }}</span>
+                <div class="team-mini-info">
+                  <strong>{{ ht.name }}</strong>
+                  <span>{{ ht.tacticalSetup }} · {{ ht.primaryStyle }}</span>
+                  <span>Forma: <em>{{ ht.recentResults }}</em></span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <button class="swap-btn" (click)="swapTeams()" title="Zamień strony">⇄</button>
+
+          <div class="team-pick">
+            <label>Gość</label>
+            <select [(ngModel)]="awayTeamId" class="team-select">
+              <option value="">-- Wybierz drużynę --</option>
+              @for (t of teams; track t.id) {
+                <option [value]="t.id" [disabled]="t.id === homeTeamId">
+                  {{ t.flagEmoji }} {{ t.name }} (#{{ t.fifaRanking }})
+                </option>
+              }
+            </select>
+            @if (teamById(awayTeamId); as at) {
+              <div class="team-mini">
+                <span class="flag-xl">{{ at.flagEmoji }}</span>
+                <div class="team-mini-info">
+                  <strong>{{ at.name }}</strong>
+                  <span>{{ at.tacticalSetup }} · {{ at.primaryStyle }}</span>
+                  <span>Forma: <em>{{ at.recentResults }}</em></span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="options-row">
+          <div class="option-group">
+            <label>Faza turnieju</label>
+            <select [(ngModel)]="stage" class="stage-select">
+              @for (s of stages; track s) { <option [value]="s">{{ s }}</option> }
+            </select>
+          </div>
+        </div>
+      }
+
+      <!-- Wybrany mecz – podsumowanie + przyciski akcji (zawsze widoczne gdy wybrane drużyny) -->
+      @if (homeTeamId && awayTeamId && homeTeamId !== awayTeamId) {
+        <div class="selected-match-bar">
+          @if (teamById(homeTeamId); as ht) {
+            @if (teamById(awayTeamId); as at) {
+              <div class="smb-teams">
+                <span>{{ ht.flagEmoji }} <strong>{{ ht.name }}</strong></span>
+                <span class="smb-vs">vs</span>
+                <span><strong>{{ at.name }}</strong> {{ at.flagEmoji }}</span>
+                <span class="smb-stage">· {{ stage }}</span>
+              </div>
+            }
+          }
+          <div class="smb-actions">
+            <div class="option-group toggles" style="margin-right:.5rem">
+              <label class="toggle-label"><input type="checkbox" [(ngModel)]="useWeb"> Tavily</label>
+              <label class="toggle-label"><input type="checkbox" [(ngModel)]="useFootballData"> fd.org</label>
+            </div>
+            <button class="btn btn-secondary" (click)="analyze()" [disabled]="loading">
+              @if (loading) { <span class="spinner"></span> } @else { ⚡ } Poisson
+            </button>
+            <button class="btn btn-primary" (click)="analyzeWithClaude()" [disabled]="enrichedLoading">
+              @if (enrichedLoading) { <span class="spinner"></span> } @else { 🤖 } Pełna analiza AI
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (error) { <div class="error-banner">⚠️ {{ error }}</div> }
+    </div>
+  </section>
+
+  <!-- ═══ WYNIKI ════════════════════════════════════════════════════════════ -->
+  @if (prediction) {
+    <section class="results-section">
+
+      <!-- Match header -->
+      <div class="match-header-card">
+        <div class="match-vs">
+          <div class="mh-team">
+            <span class="mh-flag">{{ prediction.homeTeam.flagEmoji }}</span>
+            <span class="mh-name">{{ prediction.homeTeam.name }}</span>
+            <span class="mh-ranking">#{{ prediction.homeTeam.fifaRanking }}</span>
+          </div>
+
+          <div class="mh-center">
+            <div class="mh-score">{{ prediction.predictedHomeGoals }} – {{ prediction.predictedAwayGoals }}</div>
+            <div class="mh-xg">
+              xG: <span class="home-color">{{ prediction.homeExpectedGoals | number:'1.2-2' }}</span>
+              –
+              <span class="away-color">{{ prediction.awayExpectedGoals | number:'1.2-2' }}</span>
+            </div>
+            <div class="win-bar-wrap">
+              <div class="win-seg home-seg" [style.width.%]="prediction.homeWinProbability">{{ prediction.homeWinProbability }}%</div>
+              <div class="win-seg draw-seg" [style.width.%]="prediction.drawProbability">{{ prediction.drawProbability }}%</div>
+              <div class="win-seg away-seg" [style.width.%]="prediction.awayWinProbability">{{ prediction.awayWinProbability }}%</div>
+            </div>
+            <div class="win-bar-labels">
+              <span>{{ prediction.homeTeam.shortName }}</span><span>Remis</span><span>{{ prediction.awayTeam.shortName }}</span>
+            </div>
+            @if (enriched?.dataSourcesUsed?.length) {
+              <div class="source-chips">
+                @for (src of enriched!.dataSourcesUsed; track src) {
+                  <span class="source-chip">{{ src }}</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="mh-team right">
+            <span class="mh-flag">{{ prediction.awayTeam.flagEmoji }}</span>
+            <span class="mh-name">{{ prediction.awayTeam.name }}</span>
+            <span class="mh-ranking">#{{ prediction.awayTeam.fifaRanking }}</span>
+          </div>
+        </div>
+
+        <div class="xg-strip">
+          <div class="xs-item"><span class="xs-val">{{ prediction.expectedTotalCards | number:'1.1-1' }}</span><span class="xs-lbl">kartki</span></div>
+          <div class="xs-item"><span class="xs-val">{{ prediction.expectedTotalFouls | number:'1.0-0' }}</span><span class="xs-lbl">faule</span></div>
+          <div class="xs-item"><span class="xs-val">{{ prediction.expectedCorners | number:'1.0-0' }}</span><span class="xs-lbl">corner</span></div>
+          <div class="xs-item"><span class="xs-val">{{ prediction.expectedTotalShots | number:'1.0-0' }}</span><span class="xs-lbl">strzały</span></div>
+          <div class="xs-item conf"><span class="xs-val" [style.color]="confidenceColor(prediction.analysisConfidence)">{{ prediction.analysisConfidence }}%</span><span class="xs-lbl">pewność</span></div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs-bar">
+        <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="activeTab='overview'">📊 Przegląd</button>
+        <button class="tab-btn" [class.active]="activeTab === 'players'" (click)="activeTab='players'">👤 Zawodnicy</button>
+        <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="activeTab='history'">📅 Forma & Historia</button>
+        <button class="tab-btn" [class.active]="activeTab === 'stats'" (click)="activeTab='stats'">📈 Statystyki</button>
+        <button class="tab-btn" [class.active]="activeTab === 'betting'" (click)="activeTab='betting'">🎰 Kupony</button>
+        @if (enriched?.claudeAnalysis) {
+          <button class="tab-btn ai-tab" [class.active]="activeTab === 'claude'" (click)="activeTab='claude'">🤖 Claude AI</button>
+        }
+      </div>
+
+      <!-- ── PRZEGLĄD ──────────────────────────────────────────────────── -->
+      @if (activeTab === 'overview') {
+        <div class="tab-content">
+          <div class="overview-grid">
+
+            <div class="card verdict-card">
+              <h3>Werdykt</h3>
+              <p class="verdict-body">{{ prediction.verdict }}</p>
+              <p class="summary-body">{{ prediction.matchSummary }}</p>
+            </div>
+
+            <div class="card">
+              <h3>Najbardziej prawdopodobne wyniki</h3>
+              @for (s of prediction.topScores.slice(0,6); track s.label) {
+                <div class="score-row">
+                  <span class="score-lbl">{{ s.label }}</span>
+                  <div class="score-bar-wrap"><div class="score-bar" [style.width.%]="s.probability * 2.5"></div></div>
+                  <span class="score-pct">{{ s.probability }}%</span>
+                </div>
+              }
+            </div>
+
+            <div class="card">
+              <h3>Kluczowe czynniki</h3>
+              <ul class="factor-list">
+                @for (f of prediction.keyFactors; track f) { <li>{{ f }}</li> }
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Strefy zagrożenia ⚡</h3>
+              <ul class="danger-list">
+                @for (d of prediction.dangerZones; track d) { <li>{{ d }}</li> }
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Analiza taktyczna</h3>
+              <ul class="tactical-list">
+                @for (t of prediction.tacticalInsights; track t) { <li>{{ t }}</li> }
+              </ul>
+            </div>
+
+            <div class="card compare-mini">
+              <h3>Porównanie</h3>
+              <div class="cmp-row">
+                <span class="cmp-v home-color">{{ prediction.homeTeam.goalsPerGame | number:'1.2-2' }}</span>
+                <span class="cmp-lbl">Gole/mecz</span>
+                <span class="cmp-v away-color">{{ prediction.awayTeam.goalsPerGame | number:'1.2-2' }}</span>
+              </div>
+              <div class="cmp-bar">
+                <div class="cb-h" [style.width.%]="goalShare(prediction.homeTeam.goalsPerGame, prediction.awayTeam.goalsPerGame)"></div>
+                <div class="cb-a" [style.flex]="1"></div>
+              </div>
+              <div class="cmp-row">
+                <span class="cmp-v home-color">{{ prediction.homeTeam.possession }}%</span>
+                <span class="cmp-lbl">Posiadanie</span>
+                <span class="cmp-v away-color">{{ prediction.awayTeam.possession }}%</span>
+              </div>
+              <div class="cmp-bar">
+                <div class="cb-h" [style.width.%]="prediction.homeTeam.possession"></div>
+                <div class="cb-a" [style.flex]="1"></div>
+              </div>
+              <div class="cmp-row">
+                <span class="cmp-v home-color">{{ prediction.homeTeam.squadStrength }}</span>
+                <span class="cmp-lbl">Siła kadry</span>
+                <span class="cmp-v away-color">{{ prediction.awayTeam.squadStrength }}</span>
+              </div>
+              <div class="cmp-bar">
+                <div class="cb-h" [style.width.%]="goalShare(prediction.homeTeam.squadStrength, prediction.awayTeam.squadStrength)"></div>
+                <div class="cb-a" [style.flex]="1"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      }
+
+      <!-- ── ZAWODNICY ──────────────────────────────────────────────────── -->
+      @if (activeTab === 'players') {
+        <div class="tab-content">
+          <div class="players-grid">
+
+            <div class="card">
+              <h3>{{ prediction.homeTeam.flagEmoji }} {{ prediction.homeTeam.name }}</h3>
+              <div class="player-list">
+                @for (p of topPlayers(prediction.homePlayerPredictions); track p.playerId) {
+                  <div class="player-card" [class.star]="p.isStar">
+                    <div class="pc-head">
+                      <div class="pc-name-row">
+                        @if (p.isStar) { <span class="star-ico">★</span> }
+                        <span class="pc-name">{{ p.playerName }}</span>
+                        <span class="pc-pos">{{ p.position }}</span>
+                      </div>
+                      <span class="threat-pill" [style.background]="threatColor(p.threatLevel)">{{ p.threatLevel }}</span>
+                    </div>
+                    <div class="pc-stats">
+                      <div class="pcs"><span class="pcs-v">{{ p.expectedGoals | number:'1.2-2' }}</span><span class="pcs-l">xG</span></div>
+                      <div class="pcs"><span class="pcs-v">{{ p.expectedAssists | number:'1.2-2' }}</span><span class="pcs-l">xA</span></div>
+                      <div class="pcs"><span class="pcs-v">{{ p.expectedShots | number:'1.1-1' }}</span><span class="pcs-l">strzały</span></div>
+                      <div class="pcs"><span class="pcs-v yellow">{{ (p.yellowCardProbability * 100) | number:'1.0-0' }}%</span><span class="pcs-l">żółta</span></div>
+                    </div>
+                    @if (enriched?.homePlayerClubStats?.length && findClubStats(p.playerName, enriched!.homePlayerClubStats); as cs) {
+                      <div class="club-strip">
+                        <span class="cs-club">{{ cs.club }}</span>
+                        <span class="cs-stat"><strong>{{ cs.goals }}</strong>G</span>
+                        <span class="cs-stat"><strong>{{ cs.assists }}</strong>A</span>
+                        @if (cs.penalties > 0) { <span class="cs-stat pk"><strong>{{ cs.penalties }}</strong>pk</span> }
+                        <span class="cs-league">{{ cs.competition }}</span>
+                      </div>
+                    }
+                    <p class="pc-insight">{{ p.keyInsight }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>{{ prediction.awayTeam.flagEmoji }} {{ prediction.awayTeam.name }}</h3>
+              <div class="player-list">
+                @for (p of topPlayers(prediction.awayPlayerPredictions); track p.playerId) {
+                  <div class="player-card" [class.star]="p.isStar">
+                    <div class="pc-head">
+                      <div class="pc-name-row">
+                        @if (p.isStar) { <span class="star-ico">★</span> }
+                        <span class="pc-name">{{ p.playerName }}</span>
+                        <span class="pc-pos">{{ p.position }}</span>
+                      </div>
+                      <span class="threat-pill" [style.background]="threatColor(p.threatLevel)">{{ p.threatLevel }}</span>
+                    </div>
+                    <div class="pc-stats">
+                      <div class="pcs"><span class="pcs-v">{{ p.expectedGoals | number:'1.2-2' }}</span><span class="pcs-l">xG</span></div>
+                      <div class="pcs"><span class="pcs-v">{{ p.expectedAssists | number:'1.2-2' }}</span><span class="pcs-l">xA</span></div>
+                      <div class="pcs"><span class="pcs-v">{{ p.expectedShots | number:'1.1-1' }}</span><span class="pcs-l">strzały</span></div>
+                      <div class="pcs"><span class="pcs-v yellow">{{ (p.yellowCardProbability * 100) | number:'1.0-0' }}%</span><span class="pcs-l">żółta</span></div>
+                    </div>
+                    @if (enriched?.awayPlayerClubStats?.length && findClubStats(p.playerName, enriched!.awayPlayerClubStats); as cs) {
+                      <div class="club-strip">
+                        <span class="cs-club">{{ cs.club }}</span>
+                        <span class="cs-stat"><strong>{{ cs.goals }}</strong>G</span>
+                        <span class="cs-stat"><strong>{{ cs.assists }}</strong>A</span>
+                        @if (cs.penalties > 0) { <span class="cs-stat pk"><strong>{{ cs.penalties }}</strong>pk</span> }
+                        <span class="cs-league">{{ cs.competition }}</span>
+                      </div>
+                    }
+                    <p class="pc-insight">{{ p.keyInsight }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Tabela statystyk klubowych -->
+          @if (enriched && (enriched.homePlayerClubStats.length || enriched.awayPlayerClubStats.length)) {
+            <div class="card mt-2">
+              <h3>Statystyki klubowe zawodników – sezon 2024/25</h3>
+              <div class="club-tables-grid">
+                @if (enriched.homePlayerClubStats.length) {
+                  <div>
+                    <h4>{{ prediction.homeTeam.flagEmoji }} {{ prediction.homeTeam.name }}</h4>
+                    <table class="data-table">
+                      <thead><tr><th>Zawodnik</th><th>Klub</th><th>Liga</th><th>G</th><th>A</th><th>pk</th></tr></thead>
+                      <tbody>
+                        @for (cs of enriched.homePlayerClubStats; track cs.playerName) {
+                          <tr>
+                            <td>{{ cs.playerName }}</td><td>{{ cs.club }}</td>
+                            <td><span class="league-pill">{{ cs.competition }}</span></td>
+                            <td class="num home-color"><strong>{{ cs.goals }}</strong></td>
+                            <td class="num">{{ cs.assists }}</td>
+                            <td class="num muted">{{ cs.penalties || '–' }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+                @if (enriched.awayPlayerClubStats.length) {
+                  <div>
+                    <h4>{{ prediction.awayTeam.flagEmoji }} {{ prediction.awayTeam.name }}</h4>
+                    <table class="data-table">
+                      <thead><tr><th>Zawodnik</th><th>Klub</th><th>Liga</th><th>G</th><th>A</th><th>pk</th></tr></thead>
+                      <tbody>
+                        @for (cs of enriched.awayPlayerClubStats; track cs.playerName) {
+                          <tr>
+                            <td>{{ cs.playerName }}</td><td>{{ cs.club }}</td>
+                            <td><span class="league-pill">{{ cs.competition }}</span></td>
+                            <td class="num away-color"><strong>{{ cs.goals }}</strong></td>
+                            <td class="num">{{ cs.assists }}</td>
+                            <td class="num muted">{{ cs.penalties || '–' }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ── FORMA & HISTORIA ───────────────────────────────────────────── -->
+      @if (activeTab === 'history') {
+        <div class="tab-content">
+          <div class="history-grid">
+
+            @if (!enriched?.homeFormData && !enriched?.awayFormData) {
+              <div class="card no-data">
+                <p>Brak danych historycznych EC/WC. Użyj <strong>Pełnej analizy AI</strong> aby pobrać dane z football-data.org.</p>
+              </div>
+            }
+
+            @if (enriched?.homeFormData; as hf) {
+              <div class="card form-card">
+                <h3>{{ prediction.homeTeam.flagEmoji }} {{ hf.teamName }} – Forma EC/WC</h3>
+                <div class="form-summary">
+                  <div class="fs-item"><span class="fs-v">{{ hf.played }}</span><span class="fs-l">mecze</span></div>
+                  <div class="fs-item win"><span class="fs-v">{{ hf.won }}</span><span class="fs-l">W</span></div>
+                  <div class="fs-item draw"><span class="fs-v">{{ hf.drawn }}</span><span class="fs-l">D</span></div>
+                  <div class="fs-item loss"><span class="fs-v">{{ hf.lost }}</span><span class="fs-l">L</span></div>
+                  <div class="fs-item"><span class="fs-v">{{ hf.goalsScored }}:{{ hf.goalsConceded }}</span><span class="fs-l">bramki</span></div>
+                  <div class="fs-item pct"><span class="fs-v home-color">{{ formWinPct(hf) }}%</span><span class="fs-l">wygrane</span></div>
+                </div>
+                <div class="form-bar-track"><div class="form-bar-fill home" [style.width.%]="formWinPct(hf)"></div></div>
+                @if (hf.matches?.length) {
+                  <table class="form-table">
+                    <thead><tr><th>Data</th><th>Rywale</th><th>B/W</th><th>Wynik</th><th>Komp.</th></tr></thead>
+                    <tbody>
+                      @for (m of hf.matches; track m.date) {
+                        <tr>
+                          <td class="muted">{{ m.date | date:'dd.MM' }}</td>
+                          <td>{{ m.isHome ? '🏠' : '✈️' }} {{ m.opponent }}</td>
+                          <td><span class="res-badge" [style.background]="resultColor(m.result)">{{ m.result }}</span></td>
+                          <td>{{ m.goalsFor }}:{{ m.goalsAgainst }}</td>
+                          <td class="muted comp">{{ m.competition }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+              </div>
+            }
+
+            @if (enriched?.awayFormData; as af) {
+              <div class="card form-card">
+                <h3>{{ prediction.awayTeam.flagEmoji }} {{ af.teamName }} – Forma EC/WC</h3>
+                <div class="form-summary">
+                  <div class="fs-item"><span class="fs-v">{{ af.played }}</span><span class="fs-l">mecze</span></div>
+                  <div class="fs-item win"><span class="fs-v">{{ af.won }}</span><span class="fs-l">W</span></div>
+                  <div class="fs-item draw"><span class="fs-v">{{ af.drawn }}</span><span class="fs-l">D</span></div>
+                  <div class="fs-item loss"><span class="fs-v">{{ af.lost }}</span><span class="fs-l">L</span></div>
+                  <div class="fs-item"><span class="fs-v">{{ af.goalsScored }}:{{ af.goalsConceded }}</span><span class="fs-l">bramki</span></div>
+                  <div class="fs-item pct"><span class="fs-v away-color">{{ formWinPct(af) }}%</span><span class="fs-l">wygrane</span></div>
+                </div>
+                <div class="form-bar-track"><div class="form-bar-fill away" [style.width.%]="formWinPct(af)"></div></div>
+                @if (af.matches?.length) {
+                  <table class="form-table">
+                    <thead><tr><th>Data</th><th>Rywale</th><th>B/W</th><th>Wynik</th><th>Komp.</th></tr></thead>
+                    <tbody>
+                      @for (m of af.matches; track m.date) {
+                        <tr>
+                          <td class="muted">{{ m.date | date:'dd.MM' }}</td>
+                          <td>{{ m.isHome ? '🏠' : '✈️' }} {{ m.opponent }}</td>
+                          <td><span class="res-badge" [style.background]="resultColor(m.result)">{{ m.result }}</span></td>
+                          <td>{{ m.goalsFor }}:{{ m.goalsAgainst }}</td>
+                          <td class="muted comp">{{ m.competition }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+              </div>
+            }
+
+            @if (enriched?.tavilyHomeQualifiers || enriched?.tavilyAwayQualifiers) {
+              <div class="card">
+                <h3>🌍 Eliminacje & Towarzyskie (Tavily)</h3>
+                @if (enriched?.tavilyHomeQualifiers) {
+                  <div class="qual-section">
+                    <h4>{{ prediction.homeTeam.flagEmoji }} {{ prediction.homeTeam.name }}</h4>
+                    <pre class="qual-text">{{ enriched!.tavilyHomeQualifiers }}</pre>
+                  </div>
+                }
+                @if (enriched?.tavilyAwayQualifiers) {
+                  <div class="qual-section">
+                    <h4>{{ prediction.awayTeam.flagEmoji }} {{ prediction.awayTeam.name }}</h4>
+                    <pre class="qual-text">{{ enriched!.tavilyAwayQualifiers }}</pre>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (enriched?.tavilyH2H) {
+              <div class="card">
+                <h3>⚔️ Historia bezpośrednich spotkań</h3>
+                <pre class="qual-text">{{ enriched!.tavilyH2H }}</pre>
+              </div>
+            }
+
+          </div>
+        </div>
+      }
+
+      <!-- ── STATYSTYKI ─────────────────────────────────────────────────── -->
+      @if (activeTab === 'stats') {
+        <div class="tab-content">
+          <div class="stats-grid">
+
+            <div class="card">
+              <h3>Porównanie drużyn</h3>
+              <div class="cmp-list">
+
+                <div class="cmp-row"><span class="cmp-v home-color">{{ prediction.homeTeam.goalsPerGame | number:'1.2-2' }}</span><span class="cmp-lbl">Gole/mecz</span><span class="cmp-v away-color">{{ prediction.awayTeam.goalsPerGame | number:'1.2-2' }}</span></div>
+                <div class="cmp-bar"><div class="cb-h" [style.width.%]="goalShare(prediction.homeTeam.goalsPerGame, prediction.awayTeam.goalsPerGame)"></div><div class="cb-a" style="flex:1"></div></div>
+
+                <div class="cmp-row"><span class="cmp-v home-color">{{ prediction.homeTeam.possession }}%</span><span class="cmp-lbl">Posiadanie</span><span class="cmp-v away-color">{{ prediction.awayTeam.possession }}%</span></div>
+                <div class="cmp-bar"><div class="cb-h" [style.width.%]="prediction.homeTeam.possession"></div><div class="cb-a" style="flex:1"></div></div>
+
+                <div class="cmp-row"><span class="cmp-v home-color">{{ prediction.homeTeam.shotsPerGame | number:'1.1-1' }}</span><span class="cmp-lbl">Strzały/mecz</span><span class="cmp-v away-color">{{ prediction.awayTeam.shotsPerGame | number:'1.1-1' }}</span></div>
+                <div class="cmp-bar"><div class="cb-h" [style.width.%]="goalShare(prediction.homeTeam.shotsPerGame, prediction.awayTeam.shotsPerGame)"></div><div class="cb-a" style="flex:1"></div></div>
+
+                <div class="cmp-row"><span class="cmp-v home-color">{{ prediction.homeTeam.foulsPerGame | number:'1.1-1' }}</span><span class="cmp-lbl">Faule/mecz</span><span class="cmp-v away-color">{{ prediction.awayTeam.foulsPerGame | number:'1.1-1' }}</span></div>
+                <div class="cmp-bar"><div class="cb-h" [style.width.%]="goalShare(prediction.homeTeam.foulsPerGame, prediction.awayTeam.foulsPerGame)"></div><div class="cb-a" style="flex:1"></div></div>
+
+                <div class="cmp-row"><span class="cmp-v home-color">{{ prediction.homeTeam.currentForm | number:'1.1-1' }}</span><span class="cmp-lbl">Forma (1-10)</span><span class="cmp-v away-color">{{ prediction.awayTeam.currentForm | number:'1.1-1' }}</span></div>
+                <div class="cmp-bar"><div class="cb-h" [style.width.%]="goalShare(prediction.homeTeam.currentForm, prediction.awayTeam.currentForm)"></div><div class="cb-a" style="flex:1"></div></div>
+
+                <div class="cmp-row"><span class="cmp-v home-color">{{ prediction.homeTeam.squadStrength }}</span><span class="cmp-lbl">Siła kadry</span><span class="cmp-v away-color">{{ prediction.awayTeam.squadStrength }}</span></div>
+                <div class="cmp-bar"><div class="cb-h" [style.width.%]="goalShare(prediction.homeTeam.squadStrength, prediction.awayTeam.squadStrength)"></div><div class="cb-a" style="flex:1"></div></div>
+
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Statystyki meczu</h3>
+              <div class="match-stats-list">
+                <div class="msl-item"><span>xG łącznie</span><strong>{{ (prediction.homeExpectedGoals + prediction.awayExpectedGoals) | number:'1.2-2' }}</strong></div>
+                <div class="msl-item"><span>Przewidywany wynik</span><strong>{{ prediction.predictedHomeGoals }}–{{ prediction.predictedAwayGoals }} ({{ prediction.predictedScoreProbability }}%)</strong></div>
+                <div class="msl-item"><span>Łączne faule</span><strong>{{ prediction.expectedTotalFouls | number:'1.0-0' }}</strong></div>
+                <div class="msl-item"><span>Łączne kartki</span><strong>{{ prediction.expectedTotalCards | number:'1.1-1' }}</strong></div>
+                <div class="msl-item"><span>Łączne strzały</span><strong>{{ prediction.expectedTotalShots | number:'1.0-0' }}</strong></div>
+                <div class="msl-item"><span>Rzuty rożne</span><strong>{{ prediction.expectedCorners | number:'1.0-0' }}</strong></div>
+                <div class="msl-item"><span>Pewność analizy</span><strong [style.color]="confidenceColor(prediction.analysisConfidence)">{{ prediction.analysisConfidence }}%</strong></div>
+              </div>
+
+              <h3 class="mt-h">Forma (5 ostatnich)</h3>
+              <div class="form-compare">
+                <div>
+                  <span class="fc-name">{{ prediction.homeTeam.shortName }}</span>
+                  @for (d of formDots(prediction.homeTeam.recentResults); track $index) {
+                    <span class="form-dot" [style.background]="resultColor(d.r)">{{ d.r }}</span>
+                  }
+                </div>
+                <div>
+                  <span class="fc-name">{{ prediction.awayTeam.shortName }}</span>
+                  @for (d of formDots(prediction.awayTeam.recentResults); track $index) {
+                    <span class="form-dot" [style.background]="resultColor(d.r)">{{ d.r }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      }
+
+      <!-- ── KUPONY ─────────────────────────────────────────────────────── -->
+      @if (activeTab === 'betting') {
+        <div class="tab-content">
+          <div class="betting-grid">
+
+            <div class="card">
+              <h3>🏆 Wynik meczu</h3>
+              <div class="ou-list">
+                <div class="ou-item" [class.hot]="prediction.homeWinProbability > 50">
+                  <span>{{ prediction.homeTeam.shortName }} wygrywa</span>
+                  <div class="ou-bar-w"><div class="ou-bar home" [style.width.%]="prediction.homeWinProbability"></div></div>
+                  <span class="ou-pct home-color">{{ prediction.homeWinProbability }}%</span>
+                </div>
+                <div class="ou-item" [class.hot]="prediction.drawProbability > 35">
+                  <span>Remis</span>
+                  <div class="ou-bar-w"><div class="ou-bar draw" [style.width.%]="prediction.drawProbability"></div></div>
+                  <span class="ou-pct">{{ prediction.drawProbability }}%</span>
+                </div>
+                <div class="ou-item" [class.hot]="prediction.awayWinProbability > 50">
+                  <span>{{ prediction.awayTeam.shortName }} wygrywa</span>
+                  <div class="ou-bar-w"><div class="ou-bar away" [style.width.%]="prediction.awayWinProbability"></div></div>
+                  <span class="ou-pct away-color">{{ prediction.awayWinProbability }}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>⚽ Over/Under – Bramki</h3>
+              <div class="ou-list">
+                <div class="ou-item" [class.hot]="prediction.bettingAngles.over15GoalsProbability > 70">
+                  <span>Over 1.5</span>
+                  <div class="ou-bar-w"><div class="ou-bar" [style.width.%]="prediction.bettingAngles.over15GoalsProbability"></div></div>
+                  <span class="ou-pct">{{ prediction.bettingAngles.over15GoalsProbability }}%</span>
+                </div>
+                <div class="ou-item" [class.hot]="prediction.bettingAngles.over25GoalsProbability > 55">
+                  <span>Over 2.5</span>
+                  <div class="ou-bar-w"><div class="ou-bar" [style.width.%]="prediction.bettingAngles.over25GoalsProbability"></div></div>
+                  <span class="ou-pct">{{ prediction.bettingAngles.over25GoalsProbability }}%</span>
+                </div>
+                <div class="ou-item">
+                  <span>Over 3.5</span>
+                  <div class="ou-bar-w"><div class="ou-bar" [style.width.%]="prediction.bettingAngles.over35GoalsProbability"></div></div>
+                  <span class="ou-pct">{{ prediction.bettingAngles.over35GoalsProbability }}%</span>
+                </div>
+                <div class="ou-item">
+                  <span>Obie strzelą (BTTS)</span>
+                  <div class="ou-bar-w"><div class="ou-bar btts" [style.width.%]="prediction.bettingAngles.bothTeamsToScoreProbability"></div></div>
+                  <span class="ou-pct">{{ prediction.bettingAngles.bothTeamsToScoreProbability }}%</span>
+                </div>
+                <div class="ou-item">
+                  <span>{{ prediction.homeTeam.shortName }} Czyste konto</span>
+                  <div class="ou-bar-w"><div class="ou-bar home" [style.width.%]="prediction.bettingAngles.homeCleanSheetProbability"></div></div>
+                  <span class="ou-pct home-color">{{ prediction.bettingAngles.homeCleanSheetProbability }}%</span>
+                </div>
+                <div class="ou-item">
+                  <span>{{ prediction.awayTeam.shortName }} Czyste konto</span>
+                  <div class="ou-bar-w"><div class="ou-bar away" [style.width.%]="prediction.bettingAngles.awayCleanSheetProbability"></div></div>
+                  <span class="ou-pct away-color">{{ prediction.bettingAngles.awayCleanSheetProbability }}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>🟨 Kartki & Faule</h3>
+              <div class="ou-list">
+                <div class="ou-item"><span>Over 3.5 kartek</span><div class="ou-bar-w"><div class="ou-bar ycard" [style.width.%]="prediction.bettingAngles.over35CardsProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.over35CardsProbability }}%</span></div>
+                <div class="ou-item"><span>Over 4.5 kartek</span><div class="ou-bar-w"><div class="ou-bar ycard" [style.width.%]="prediction.bettingAngles.over45CardsProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.over45CardsProbability }}%</span></div>
+                <div class="ou-item"><span>Więcej kartek: {{ prediction.bettingAngles.moreCardsTeam }}</span><div class="ou-bar-w"><div class="ou-bar ycard" [style.width.%]="prediction.bettingAngles.moreCardsProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.moreCardsProbability }}%</span></div>
+                <div class="ou-item"><span>Over 8.5 fauli</span><div class="ou-bar-w"><div class="ou-bar foul" [style.width.%]="prediction.bettingAngles.over85FoulsProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.over85FoulsProbability }}%</span></div>
+                <div class="ou-item"><span>Over 10.5 fauli</span><div class="ou-bar-w"><div class="ou-bar foul" [style.width.%]="prediction.bettingAngles.over105FoulsProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.over105FoulsProbability }}%</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>🚩 Rzuty rożne & Inne</h3>
+              <div class="ou-list">
+                <div class="ou-item"><span>Over 9.5 rogów</span><div class="ou-bar-w"><div class="ou-bar" [style.width.%]="prediction.bettingAngles.over9CornersProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.over9CornersProbability }}%</span></div>
+                <div class="ou-item"><span>Pierwszy gol: {{ prediction.bettingAngles.firstGoalTeam }}</span><div class="ou-bar-w"><div class="ou-bar home" [style.width.%]="prediction.bettingAngles.firstGoalProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.firstGoalProbability }}%</span></div>
+                <div class="ou-item"><span>HT wynik: {{ prediction.bettingAngles.halfTimeResult }}</span><div class="ou-bar-w"><div class="ou-bar" [style.width.%]="prediction.bettingAngles.halfTimeResultProbability"></div></div><span class="ou-pct">{{ prediction.bettingAngles.halfTimeResultProbability }}%</span></div>
+              </div>
+            </div>
+
+            <div class="card value-card">
+              <h3>💎 Value Bets</h3>
+              @if (prediction.bettingAngles.valueBets.length) {
+                <ul class="value-list">
+                  @for (v of prediction.bettingAngles.valueBets; track v) { <li>✅ {{ v }}</li> }
+                </ul>
+              }
+              @if (prediction.bettingAngles.avoidBets.length) {
+                <h4 class="avoid-h">⛔ Unikaj</h4>
+                <ul class="avoid-list">
+                  @for (a of prediction.bettingAngles.avoidBets; track a) { <li>{{ a }}</li> }
+                </ul>
+              }
+              @if (enriched?.claudeAnalysis) {
+                <div class="claude-nudge">Pełna analiza zakładowa AI → zakładka <strong>Claude AI</strong></div>
+              }
+            </div>
+
+          </div>
+        </div>
+      }
+
+      <!-- ── CLAUDE AI ───────────────────────────────────────────────────── -->
+      @if (activeTab === 'claude' && enriched?.claudeAnalysis) {
+        <div class="tab-content">
+          <div class="claude-grid">
+
+            <div class="card claude-card">
+              <div class="claude-hdr">
+                <span class="claude-ico">🤖</span>
+                <div>
+                  <h3>Analiza Claude AI</h3>
+                  <span class="claude-meta">{{ prediction.homeTeam.name }} vs {{ prediction.awayTeam.name }} · {{ stage }}</span>
+                </div>
+              </div>
+              <div class="claude-body" [innerHTML]="renderMarkdown(enriched!.claudeAnalysis!)"></div>
+            </div>
+
+            @if (enriched?.dataSourcesUsed?.length) {
+              <div class="card">
+                <h3>Źródła danych</h3>
+                <ul class="src-list">
+                  @for (src of enriched!.dataSourcesUsed; track src) { <li>✓ {{ src }}</li> }
+                </ul>
+                <div class="rag-cnt">RAG dokumenty: <strong>{{ enriched!.ragDocumentsUsed }}</strong></div>
+              </div>
+            }
+
+            @if (enriched?.tavilyHomeNews || enriched?.tavilyAwayNews) {
+              <div class="card">
+                <h3>📰 Wiadomości (Tavily)</h3>
+                @if (enriched?.tavilyHomeNews) {
+                  <div class="news-sec"><h4>{{ prediction.homeTeam.flagEmoji }} {{ prediction.homeTeam.name }}</h4><pre class="news-pre">{{ enriched!.tavilyHomeNews }}</pre></div>
+                }
+                @if (enriched?.tavilyAwayNews) {
+                  <div class="news-sec"><h4>{{ prediction.awayTeam.flagEmoji }} {{ prediction.awayTeam.name }}</h4><pre class="news-pre">{{ enriched!.tavilyAwayNews }}</pre></div>
+                }
+              </div>
+            }
+
+          </div>
+        </div>
+      }
+
+    </section>
+  }
+
+  <!-- Loading overlay -->
+  @if (enrichedLoading && !enriched) {
+    <div class="loading-overlay">
+      <div class="loading-card">
+        <div class="ld-spinner"></div>
+        <p class="ld-title">Pełna analiza AI…</p>
+        <p class="ld-sub">Pobieranie danych z football-data.org, Tavily i Claude AI</p>
+        <div class="ld-steps">
+          <span>⚽ Poisson</span><span>📅 EC/WC Historia</span><span>👤 Stats klubowe</span><span>🌍 Tavily</span><span>🤖 Claude</span>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

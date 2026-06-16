@@ -1,0 +1,23 @@
+# Sekrety – nigdy nie commituj
+.env
+
+# Baza danych
+*.db
+*.db-shm
+*.db-wal
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# OS
+.DS_Store
+Thumbs.db

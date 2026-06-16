@@ -1,0 +1,177 @@
+using Microsoft.AspNetCore.Mvc;
+using MundialPrediction.Core.Interfaces;
+using MundialPrediction.Infrastructure.ExternalApis;
+
+namespace MundialPrediction.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class MatchesController : ControllerBase
+{
+    private readonly FootballDataClient _fd;
+    private readonly ITeamRepository _teams;
+    private readonly ILogger<MatchesController> _logger;
+
+    // Mapowanie stage kodów fd.org → nasze etapy
+    private static readonly Dictionary<string, string> StageMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["GROUP_STAGE"]    = "Group",
+        ["ROUND_OF_32"]    = "Round of 32",
+        ["ROUND_OF_16"]    = "Round of 16",
+        ["QUARTER_FINALS"] = "Quarter-Final",
+        ["SEMI_FINALS"]    = "Semi-Final",
+        ["THIRD_PLACE"]    = "Semi-Final",
+        ["FINAL"]          = "Final",
+    };
+
+    public MatchesController(FootballDataClient fd, ITeamRepository teams, ILogger<MatchesController> logger)
+    {
+        _fd = fd;
+        _teams = teams;
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Terminarz MŚ 2026 z football-data.org, zmapowany na wewnętrzne ID drużyn.
+    /// </summary>
+    [HttpGet("wc2026")]
+    public async Task<IActionResult> GetSchedule()
+    {
+        try
+        {
+            var raw = await _fd.GetMatchesAsync();
+            if (raw == null)
+                return StatusCode(503, new { error = "football-data.org niedostępne lub brak klucza API" });
+
+            var allTeams = (await _teams.GetAllTeamsAsync()).ToList();
+
+            // Budujemy szybką mapę: fdName → nasz Team (fuzzy)
+            var fdNameToTeam = new Dictionary<string, Core.Models.Team>(StringComparer.OrdinalIgnoreCase);
+            foreach (var t in allTeams)
+                fdNameToTeam[t.Name] = t;
+
+            string? ResolveTeamId(string? fdName)
+            {
+                if (string.IsNullOrEmpty(fdName)) return null;
+                if (fdNameToTeam.TryGetValue(fdName, out var exact)) return exact.Id;
+                var partial = allTeams.FirstOrDefault(t =>
+                    t.Name.Contains(fdName, StringComparison.OrdinalIgnoreCase) ||
+                    fdName.Contains(t.Name, StringComparison.OrdinalIgnoreCase) ||
+                    t.ShortName.Equals(fdName, StringComparison.OrdinalIgnoreCase));
+                return partial?.Id;
+            }
+
+            var matchesArr = raw["matches"]?.AsArray();
+            if (matchesArr == null) return Ok(Array.Empty<object>());
+
+            var result = new List<WcMatchDto>();
+
+            foreach (var m in matchesArr)
+            {
+                if (m == null) continue;
+
+                var fdStage  = m["stage"]?.ToString() ?? "";
+                var fdGroup  = m["group"]?.ToString();
+                var utcDate  = m["utcDate"]?.ToString();
+                var status   = m["status"]?.ToString() ?? "TIMED";
+                var matchday = m["matchday"]?.GetValue<int?>() ?? 0;
+
+                var homefdName = m["homeTeam"]?["name"]?.ToString();
+                var awayfdName = m["awayTeam"]?["name"]?.ToString();
+
+                // Dla meczów pucharowych drużyna może być "TBD" – pomijamy
+                if (string.IsNullOrEmpty(homefdName) || homefdName == "TBD") continue;
+                if (string.IsNullOrEmpty(awayfdName) || awayfdName == "TBD") continue;
+
+                var homeId = ResolveTeamId(homefdName);
+                var awayId = ResolveTeamId(awayfdName);
+
+                var homeTeam = homeId != null ? allTeams.FirstOrDefault(t => t.Id == homeId) : null;
+                var awayTeam = awayId != null ? allTeams.FirstOrDefault(t => t.Id == awayId) : null;
+
+                var scoreHome = m["score"]?["fullTime"]?["home"]?.GetValue<int?>();
+                var scoreAway = m["score"]?["fullTime"]?["away"]?.GetValue<int?>();
+
+                result.Add(new WcMatchDto
+                {
+                    Matchday    = matchday,
+                    Stage       = StageMap.TryGetValue(fdStage, out var s) ? s : fdStage,
+                    FdStage     = fdStage,
+                    Group       = fdGroup?.Replace("GROUP_", "Grupa "),
+                    UtcDate     = utcDate,
+                    Status      = status,
+                    HomeTeam    = new WcTeamRef
+                    {
+                        Id       = homeId,
+                        FdName   = homefdName,
+                        Name     = homeTeam?.Name ?? homefdName,
+                        FlagEmoji = homeTeam?.FlagEmoji ?? "🏳️",
+                        Known    = homeId != null,
+                    },
+                    AwayTeam    = new WcTeamRef
+                    {
+                        Id       = awayId,
+                        FdName   = awayfdName,
+                        Name     = awayTeam?.Name ?? awayfdName,
+                        FlagEmoji = awayTeam?.FlagEmoji ?? "🏳️",
+                        Known    = awayId != null,
+                    },
+                    ScoreHome   = scoreHome,
+                    ScoreAway   = scoreAway,
+                    Venue       = m["venue"]?.ToString(),
+                });
+            }
+
+            // Sortuj: faza grupowa wg matchday, potem data
+            result = result
+                .OrderBy(m => StageOrder(m.FdStage))
+                .ThenBy(m => m.Matchday)
+                .ThenBy(m => m.UtcDate)
+                .ToList();
+
+            _logger.LogInformation("Terminarz WC 2026: {Count} meczów", result.Count);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Błąd pobierania terminarza WC 2026");
+            return StatusCode(500, new { error = "Błąd wewnętrzny" });
+        }
+    }
+
+    private static int StageOrder(string fdStage) => fdStage switch
+    {
+        "GROUP_STAGE"    => 0,
+        "ROUND_OF_32"    => 1,
+        "ROUND_OF_16"    => 2,
+        "QUARTER_FINALS" => 3,
+        "SEMI_FINALS"    => 4,
+        "THIRD_PLACE"    => 5,
+        "FINAL"          => 6,
+        _                => 99,
+    };
+}
+
+public class WcMatchDto
+{
+    public int Matchday     { get; set; }
+    public string Stage     { get; set; } = "";
+    public string FdStage   { get; set; } = "";
+    public string? Group    { get; set; }
+    public string? UtcDate  { get; set; }
+    public string Status    { get; set; } = "TIMED";
+    public WcTeamRef HomeTeam { get; set; } = new();
+    public WcTeamRef AwayTeam { get; set; } = new();
+    public int? ScoreHome   { get; set; }
+    public int? ScoreAway   { get; set; }
+    public string? Venue    { get; set; }
+}
+
+public class WcTeamRef
+{
+    public string? Id       { get; set; }
+    public string FdName    { get; set; } = "";
+    public string Name      { get; set; } = "";
+    public string FlagEmoji { get; set; } = "🏳️";
+    public bool Known       { get; set; }
+}

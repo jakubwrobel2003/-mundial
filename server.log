@@ -1,0 +1,480 @@
+Używanie ustawień uruchamiania z profilu C:\repo\mundial\backend\MundialPrediction.API\Properties\launchSettings.json...
+[ENV] Załadowano: C:\repo\mundial\.env
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*) FROM "sqlite_master" WHERE "type" = 'table' AND "rootpage" IS NOT NULL;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+          CREATE VIRTUAL TABLE IF NOT EXISTS RagFts USING fts5(
+        doc_id UNINDEXED,
+        content,
+        tokenize='unicode61'
+    );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+          CREATE TRIGGER IF NOT EXISTS rag_ai AFTER INSERT ON RagDocuments BEGIN
+        INSERT INTO RagFts(doc_id, content) VALUES (new.Id, new.Content);
+    END;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+          CREATE TRIGGER IF NOT EXISTS rag_ad AFTER DELETE ON RagDocuments BEGIN
+        DELETE FROM RagFts WHERE doc_id = old.Id;
+    END;
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\repo\mundial\backend\MundialPrediction.API
+info: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      FootballData GET competitions/WC/matches?season=2026
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[100]
+      Start processing HTTP request GET https://api.football-data.org/v4/competitions/WC/matches?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[100]
+      Sending HTTP request GET https://api.football-data.org/v4/competitions/WC/matches?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[101]
+      Received HTTP response headers after 275.2598ms - 200
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[101]
+      End processing HTTP request after 283.9414ms - 200
+info: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      Mapa drużyn football-data.org: 52 wpisów
+dbug: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      Cache hit: fd:matches:all
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[@__p_0='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+dbug: MundialPrediction.Infrastructure.Services.TeamHistoryService[0]
+      Cache SQLite hit: EC 2024
+dbug: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      Cache hit: fd:matches:all
+dbug: MundialPrediction.Infrastructure.Services.TeamHistoryService[0]
+      Cache SQLite hit: EC 2024
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 18)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+info: MundialPrediction.Infrastructure.Services.PlayerClubStatsService[0]
+      Pobieram scorerów PD sezon 2024
+info: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      FootballData GET competitions/PD/scorers?season=2024&limit=50
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[100]
+      Start processing HTTP request GET https://api.football-data.org/v4/competitions/PD/scorers?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[100]
+      Sending HTTP request GET https://api.football-data.org/v4/competitions/PD/scorers?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[101]
+      Received HTTP response headers after 1906.1863ms - 200
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[101]
+      End processing HTTP request after 1906.3619ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[@p0='?' (Size = 18), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (Size = 32149)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "ApiCache" ("CacheKey", "CachedAt", "ExpiresAt", "ResponseJson")
+      VALUES (@p0, @p1, @p2, @p3);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 18)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+info: MundialPrediction.Infrastructure.Services.PlayerClubStatsService[0]
+      Pobieram scorerów SA sezon 2024
+info: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      FootballData GET competitions/SA/scorers?season=2024&limit=50
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[100]
+      Start processing HTTP request GET https://api.football-data.org/v4/competitions/SA/scorers?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[100]
+      Sending HTTP request GET https://api.football-data.org/v4/competitions/SA/scorers?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[101]
+      Received HTTP response headers after 3557.1449ms - 200
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[101]
+      End processing HTTP request after 3557.2297ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='?' (Size = 18), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (Size = 31559)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "ApiCache" ("CacheKey", "CachedAt", "ExpiresAt", "ResponseJson")
+      VALUES (@p0, @p1, @p2, @p3);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 19)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+info: MundialPrediction.Infrastructure.Services.PlayerClubStatsService[0]
+      Pobieram scorerów BL1 sezon 2024
+info: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      FootballData GET competitions/BL1/scorers?season=2024&limit=50
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[100]
+      Start processing HTTP request GET https://api.football-data.org/v4/competitions/BL1/scorers?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[100]
+      Sending HTTP request GET https://api.football-data.org/v4/competitions/BL1/scorers?*
+info: System.Net.Http.HttpClient.footballdata.ClientHandler[101]
+      Received HTTP response headers after 2194.1739ms - 200
+info: System.Net.Http.HttpClient.footballdata.LogicalHandler[101]
+      End processing HTTP request after 2194.3081ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='?' (Size = 19), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (Size = 31660)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "ApiCache" ("CacheKey", "CachedAt", "ExpiresAt", "ResponseJson")
+      VALUES (@p0, @p1, @p2, @p3);
+dbug: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      Cache hit: fd:matches:all
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: France FIFA World Cup 2026 squad injuries form news
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: Germany FIFA World Cup 2026 squad injuries form news
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: France vs Germany head to head history World Cup statistics
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: France national team 2024 2025 qualifiers friendly matches results form
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: Germany national team 2024 2025 qualifiers friendly matches results form
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 421.7803ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 421.8835ms - 200
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 422.4772ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 422.5679ms - 200
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 422.7296ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 422.8107ms - 200
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 2733.2908ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 2733.3639ms - 200
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 2775.1426ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 2775.2436ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 9)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM "RagDocuments"
+      WHERE "Id" = @p0
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 1043), @p1='?' (DbType = DateTime), @p2='?' (Size = 9), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 28), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [team_news] fra – France – aktualne wiadomości
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 9)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM "RagDocuments"
+      WHERE "Id" = @p0
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 1092), @p1='?' (DbType = DateTime), @p2='?' (Size = 9), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 29), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [team_news] ger – Germany – aktualne wiadomości
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 1178), @p1='?' (DbType = DateTime), @p2='?' (Size = 10), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 31), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [qualifiers] fra – France – eliminacje/towarzyskie
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 1051), @p1='?' (DbType = DateTime), @p2='?' (Size = 10), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 32), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [qualifiers] ger – Germany – eliminacje/towarzyskie
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[p0='?' (Size = 37), p1='?' (DbType = DateTime), p2='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT rd.Id, rd.EntityId, rd.DocType, rd.Title, rd.Content, rd.SourceUrl,
+             rf.rank
+      FROM RagDocuments rd
+      JOIN RagFts rf ON rf.doc_id = rd.Id
+      WHERE RagFts MATCH @p0
+        AND (rd.ValidUntil IS NULL OR rd.ValidUntil > @p1)
+      ORDER BY rf.rank
+      LIMIT @p2
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+info: MundialPrediction.Infrastructure.ExternalApis.ClaudeAnalysisClient[0]
+      Claude analiza: France vs Germany
+info: System.Net.Http.HttpClient.anthropic.LogicalHandler[100]
+      Start processing HTTP request POST https://api.anthropic.com/v1/messages
+info: System.Net.Http.HttpClient.anthropic.ClientHandler[100]
+      Sending HTTP request POST https://api.anthropic.com/v1/messages
+info: System.Net.Http.HttpClient.anthropic.ClientHandler[101]
+      Received HTTP response headers after 23115.6858ms - 200
+info: System.Net.Http.HttpClient.anthropic.LogicalHandler[101]
+      End processing HTTP request after 23115.7528ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Double), @p1='?' (Size = 3), @p2='?' (DbType = Double), @p3='?' (Size = 2263), @p4='?' (DbType = DateTime), @p5='?' (DbType = Double), @p6='?' (DbType = Double), @p7='?' (Size = 3), @p8='?' (DbType = Double), @p9='?' (DbType = Int32), @p10='?' (DbType = Int32), @p11='?' (Size = 15283), @p12='?' (Size = 5), @p13='?' (DbType = Boolean), @p14='?' (DbType = Boolean), @p15='?' (DbType = Boolean)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "PredictionHistory" ("AwayExpectedGoals", "AwayTeamId", "AwayWinProbability", "ClaudeAnalysis", "CreatedAt", "DrawProbability", "HomeExpectedGoals", "HomeTeamId", "HomeWinProbability", "PredictedAwayGoals", "PredictedHomeGoals", "PredictionJson", "Stage", "UsedFootballData", "UsedRag", "UsedTavily")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15)
+      RETURNING "Id";
+dbug: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      Cache hit: fd:matches:all
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+dbug: MundialPrediction.Infrastructure.Services.TeamHistoryService[0]
+      Cache SQLite hit: EC 2024
+dbug: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      Cache hit: fd:matches:all
+dbug: MundialPrediction.Infrastructure.Services.TeamHistoryService[0]
+      Cache SQLite hit: EC 2024
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 18)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+dbug: MundialPrediction.Infrastructure.Services.PlayerClubStatsService[0]
+      Cache SQLite hit: scorerzy PD
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 18)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+dbug: MundialPrediction.Infrastructure.Services.PlayerClubStatsService[0]
+      Cache SQLite hit: scorerzy SA
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 19)], CommandType='Text', CommandTimeout='30']
+      SELECT "a"."CacheKey", "a"."CachedAt", "a"."ExpiresAt", "a"."ResponseJson"
+      FROM "ApiCache" AS "a"
+      WHERE "a"."CacheKey" = @__p_0
+      LIMIT 1
+dbug: MundialPrediction.Infrastructure.Services.PlayerClubStatsService[0]
+      Cache SQLite hit: scorerzy BL1
+dbug: MundialPrediction.Infrastructure.ExternalApis.FootballDataClient[0]
+      Cache hit: fd:matches:all
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: France FIFA World Cup 2026 squad injuries form news
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: Germany FIFA World Cup 2026 squad injuries form news
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: MundialPrediction.Infrastructure.ExternalApis.TavilySearchClient[0]
+      Tavily search: France vs Germany head to head history World Cup statistics
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[100]
+      Start processing HTTP request POST https://api.tavily.com/search
+info: System.Net.Http.HttpClient.tavily.ClientHandler[100]
+      Sending HTTP request POST https://api.tavily.com/search
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+dbug: MundialPrediction.Infrastructure.Services.EnrichedPredictionService[0]
+      RAG hit: kwalifikacje France
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+dbug: MundialPrediction.Infrastructure.Services.EnrichedPredictionService[0]
+      RAG hit: kwalifikacje Germany
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 131.4677ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 131.5387ms - 200
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 131.4341ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 131.4744ms - 200
+info: System.Net.Http.HttpClient.tavily.ClientHandler[101]
+      Received HTTP response headers after 133.35ms - 200
+info: System.Net.Http.HttpClient.tavily.LogicalHandler[101]
+      End processing HTTP request after 133.3951ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 9)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM "RagDocuments"
+      WHERE "Id" = @p0
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 1043), @p1='?' (DbType = DateTime), @p2='?' (Size = 9), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 28), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [team_news] fra – France – aktualne wiadomości
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 9)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM "RagDocuments"
+      WHERE "Id" = @p0
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='?' (Size = 1092), @p1='?' (DbType = DateTime), @p2='?' (Size = 9), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 29), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [team_news] ger – Germany – aktualne wiadomości
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM "RagDocuments"
+      WHERE "Id" = @p0
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 1178), @p1='?' (DbType = DateTime), @p2='?' (Size = 10), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 31), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [qualifiers] fra – France – eliminacje/towarzyskie
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__docType_1='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND "r"."DocType" = @__docType_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      DELETE FROM "RagDocuments"
+      WHERE "Id" = @p0
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 1051), @p1='?' (DbType = DateTime), @p2='?' (Size = 10), @p3='?' (Size = 3), @p4='?', @p5='?' (Size = 32), @p6='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "RagDocuments" ("Content", "CreatedAt", "DocType", "EntityId", "SourceUrl", "Title", "ValidUntil")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: MundialPrediction.Infrastructure.RAG.KnowledgeBase[0]
+      RAG upsert: [qualifiers] ger – Germany – eliminacje/towarzyskie
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[p0='?' (Size = 37), p1='?' (DbType = DateTime), p2='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT rd.Id, rd.EntityId, rd.DocType, rd.Title, rd.Content, rd.SourceUrl,
+             rf.rank
+      FROM RagDocuments rd
+      JOIN RagFts rf ON rf.doc_id = rd.Id
+      WHERE RagFts MATCH @p0
+        AND (rd.ValidUntil IS NULL OR rd.ValidUntil > @p1)
+      ORDER BY rf.rank
+      LIMIT @p2
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__entityId_0='?' (Size = 3), @__p_1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "r"."Id", "r"."Content", "r"."CreatedAt", "r"."DocType", "r"."EntityId", "r"."SourceUrl", "r"."Title", "r"."ValidUntil"
+      FROM "RagDocuments" AS "r"
+      WHERE "r"."EntityId" = @__entityId_0 AND ("r"."ValidUntil" IS NULL OR "r"."ValidUntil" > rtrim(rtrim(strftime('%Y-%m-%d %H:%M:%f', 'now'), '0'), '.'))
+      ORDER BY "r"."CreatedAt" DESC
+      LIMIT @__p_1
+info: MundialPrediction.Infrastructure.ExternalApis.ClaudeAnalysisClient[0]
+      Claude analiza: France vs Germany
+info: System.Net.Http.HttpClient.anthropic.LogicalHandler[100]
+      Start processing HTTP request POST https://api.anthropic.com/v1/messages
+info: System.Net.Http.HttpClient.anthropic.ClientHandler[100]
+      Sending HTTP request POST https://api.anthropic.com/v1/messages
+info: System.Net.Http.HttpClient.anthropic.ClientHandler[101]
+      Received HTTP response headers after 26693.933ms - 200
+info: System.Net.Http.HttpClient.anthropic.LogicalHandler[101]
+      End processing HTTP request after 26694.1266ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Double), @p1='?' (Size = 3), @p2='?' (DbType = Double), @p3='?' (Size = 2606), @p4='?' (DbType = DateTime), @p5='?' (DbType = Double), @p6='?' (DbType = Double), @p7='?' (Size = 3), @p8='?' (DbType = Double), @p9='?' (DbType = Int32), @p10='?' (DbType = Int32), @p11='?' (Size = 15283), @p12='?' (Size = 5), @p13='?' (DbType = Boolean), @p14='?' (DbType = Boolean), @p15='?' (DbType = Boolean)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "PredictionHistory" ("AwayExpectedGoals", "AwayTeamId", "AwayWinProbability", "ClaudeAnalysis", "CreatedAt", "DrawProbability", "HomeExpectedGoals", "HomeTeamId", "HomeWinProbability", "PredictedAwayGoals", "PredictedHomeGoals", "PredictionJson", "Stage", "UsedFootballData", "UsedRag", "UsedTavily")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15)
+      RETURNING "Id";
