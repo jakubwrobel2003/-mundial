@@ -64,6 +64,8 @@ public class MatchesController : ControllerBase
             var matchesArr = raw["matches"]?.AsArray();
             if (matchesArr == null) return Ok(Array.Empty<object>());
 
+            _logger.LogInformation("fd.org zwrócił {Total} meczów WC 2026", matchesArr.Count);
+
             var result = new List<WcMatchDto>();
 
             foreach (var m in matchesArr)
@@ -79,12 +81,12 @@ public class MatchesController : ControllerBase
                 var homefdName = m["homeTeam"]?["name"]?.ToString();
                 var awayfdName = m["awayTeam"]?["name"]?.ToString();
 
-                // Dla meczów pucharowych drużyna może być "TBD" – pomijamy
-                if (string.IsNullOrEmpty(homefdName) || homefdName == "TBD") continue;
-                if (string.IsNullOrEmpty(awayfdName) || awayfdName == "TBD") continue;
+                // TBD = drużyna jeszcze nieznana (faza pucharowa) – pokazuj ale oznacz known=false
+                var homeTbd = string.IsNullOrEmpty(homefdName) || homefdName == "TBD";
+                var awayTbd = string.IsNullOrEmpty(awayfdName) || awayfdName == "TBD";
 
-                var homeId = ResolveTeamId(homefdName);
-                var awayId = ResolveTeamId(awayfdName);
+                var homeId = homeTbd ? null : ResolveTeamId(homefdName);
+                var awayId = awayTbd ? null : ResolveTeamId(awayfdName);
 
                 var homeTeam = homeId != null ? allTeams.FirstOrDefault(t => t.Id == homeId) : null;
                 var awayTeam = awayId != null ? allTeams.FirstOrDefault(t => t.Id == awayId) : null;
@@ -102,19 +104,19 @@ public class MatchesController : ControllerBase
                     Status      = status,
                     HomeTeam    = new WcTeamRef
                     {
-                        Id       = homeId,
-                        FdName   = homefdName,
-                        Name     = homeTeam?.Name ?? homefdName,
-                        FlagEmoji = homeTeam?.FlagEmoji ?? "🏳️",
-                        Known    = homeId != null,
+                        Id        = homeId,
+                        FdName    = homefdName ?? "TBD",
+                        Name      = homeTbd ? "TBD" : (homeTeam?.Name ?? homefdName ?? "?"),
+                        FlagEmoji = homeTbd ? "🏳️" : (homeTeam?.FlagEmoji ?? "🏳️"),
+                        Known     = homeId != null,
                     },
                     AwayTeam    = new WcTeamRef
                     {
-                        Id       = awayId,
-                        FdName   = awayfdName,
-                        Name     = awayTeam?.Name ?? awayfdName,
-                        FlagEmoji = awayTeam?.FlagEmoji ?? "🏳️",
-                        Known    = awayId != null,
+                        Id        = awayId,
+                        FdName    = awayfdName ?? "TBD",
+                        Name      = awayTbd ? "TBD" : (awayTeam?.Name ?? awayfdName ?? "?"),
+                        FlagEmoji = awayTbd ? "🏳️" : (awayTeam?.FlagEmoji ?? "🏳️"),
+                        Known     = awayId != null,
                     },
                     ScoreHome   = scoreHome,
                     ScoreAway   = scoreAway,

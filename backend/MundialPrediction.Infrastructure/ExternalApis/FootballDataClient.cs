@@ -52,13 +52,14 @@ public class FootballDataClient
         });
     }
 
-    // Zwraca mecze MŚ 2026 (faza grupowa + pucharowa)
+    // Zwraca mecze MŚ 2026 (faza grupowa + pucharowa).
+    // Jawny zakres dat bo fd.org bez nich zwraca tylko ~10 najbliższych dni.
     public async Task<JsonNode?> GetMatchesAsync(string? status = null)
     {
         var key = $"fd:matches:{status ?? "all"}";
         return await GetCachedAsync(key, async () =>
         {
-            var url = $"competitions/{WC2026}/matches?season={Season}";
+            var url = $"competitions/{WC2026}/matches?season={Season}&dateFrom=2026-06-01&dateTo=2026-08-01";
             if (status != null) url += $"&status={status}";
             return await FetchAsync(url);
         });
